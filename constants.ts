@@ -4,11 +4,17 @@ export const BUSINESS_INFO = {
   name: "Tekify Consult",
   website: "tekifyconsult.com.ng",
   email: "info@tekifyconsult.com.ng",
-  phone: "07031175589",
-  whatsapp: "2347031175589", // International format
+  phone: "07040586869, 08031157789",
+  whatsapp: "2348031175589", // International format
   address: "4th Floor Los Angeles Mall, Kado Abuja",
   mapUrl: "https://maps.google.com/?q=Los+Angeles+Mall,+Kado,+Abuja",
-  logo: "https://photos.app.goo.gl/QoWbQS3NcffBweQv9"
+  logo: "https://photos.google.com/photo/AF1QipPI5prEG-SVA3y2rzKFbF8QQZ9dNxN4J1fiA4th",
+  socials: {
+    facebook: "https://web.facebook.com/Mynaijakoncept",
+    instagram: "https://www.instagram.com/tekifyconsult/",
+    linkedin: "https://www.linkedin.com/search/results/all/?fetchDeterministicClustersOnly=true&heroEntityKey=urn%3Ali%3Aorganization%3A103209812&keywords=tekify%20consult&origin=RICH_QUERY_TYPEAHEAD_HISTORY&position=0&sid=8sg",
+    twitter: "https://www.instagram.com/tekifyconsult/"
+  }
 };
 
 export const NAV_LINKS = [

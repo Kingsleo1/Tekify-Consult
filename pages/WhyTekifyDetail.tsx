@@ -20,45 +20,45 @@ const WhyTekifyDetail: React.FC = () => {
   }[item.icon] || Users;
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-32 transition-colors duration-500">
       <PageHero 
         title={item.title}
         description={item.shortDesc}
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-16 shadow-xl border border-slate-200 dark:border-white/5">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-20">
+        <div className="bg-white dark:bg-slate-900 rounded-[4rem] p-12 md:p-20 shadow-2xl border border-slate-200 dark:border-white/5">
           
-          <Link to="/" className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-primary-500 mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <Link to="/" className="inline-flex items-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-primary-600 mb-12 transition-colors group">
+            <ArrowLeft className="w-4 h-4 mr-3 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
 
-          <div className="flex flex-col md:flex-row gap-10 items-start">
-             <div className="w-24 h-24 bg-primary-50 dark:bg-primary-500/10 rounded-3xl flex items-center justify-center text-primary-600 dark:text-primary-400 flex-shrink-0">
-                <IconComponent className="w-12 h-12" />
+          <div className="flex flex-col md:flex-row gap-16 items-start">
+             <div className="w-32 h-32 bg-primary-500/10 rounded-[2.5rem] flex items-center justify-center text-primary-600 dark:text-primary-400 flex-shrink-0 shadow-inner group">
+                <IconComponent className="w-14 h-14 group-hover:scale-110 transition-transform duration-500" />
              </div>
              
              <div className="flex-1">
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Why This Matters</h2>
-                <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-8">
+                <h2 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-8">Why This Matters</h2>
+                <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-12 font-medium">
                   {item.longDesc}
                 </p>
 
                 {item.stat && (
-                  <div className="inline-flex items-center px-6 py-3 rounded-xl bg-accent-purple/10 text-accent-purple border border-accent-purple/20">
-                    <span className="text-2xl font-bold mr-2">{item.stat.split(' ')[0]}</span>
-                    <span className="font-medium">{item.stat.split(' ').slice(1).join(' ')}</span>
+                  <div className="inline-flex items-center px-8 py-4 rounded-2xl bg-accent-purple/10 text-accent-purple border border-accent-purple/20 shadow-xl shadow-accent-purple/10">
+                    <span className="text-3xl font-black mr-3 tracking-tighter">{item.stat.split(' ')[0]}</span>
+                    <span className="font-black uppercase tracking-widest text-[10px]">{item.stat.split(' ').slice(1).join(' ')}</span>
                   </div>
                 )}
              </div>
           </div>
           
-          {/* Simulated CTA specific to the benefit */}
-          <div className="mt-16 pt-10 border-t border-slate-100 dark:border-white/5 text-center">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Experience the Difference</h3>
-            <div className="flex justify-center gap-4">
-               <Link to="/booking" className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold hover:scale-105 transition-transform">
+          {/* CTA Section - Immersive Split */}
+          <div className="mt-24 pt-16 border-t border-slate-100 dark:border-white/5 text-center">
+            <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-8">Experience the Difference</h3>
+            <div className="flex justify-center gap-6">
+               <Link to="/booking" className="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
                  Start a Project
                </Link>
             </div>

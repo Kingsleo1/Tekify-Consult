@@ -6,90 +6,101 @@ import PageHero from '../components/PageHero';
 
 const Services: React.FC = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen transition-colors duration-500">
       <PageHero 
         title="Our Expertise"
         description="Comprehensive digital solutions tailored to elevate your business operations and customer engagement."
       />
 
-      <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Services Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-32">
+        {/* Services Grid - Modern Immersive Cards */}
+        <div className="grid lg:grid-cols-2 gap-12 mb-48">
           {SERVICES.map((service, idx) => (
             <div 
               key={service.id} 
-              className="bg-white dark:bg-white/5 rounded-3xl p-8 border border-slate-200 dark:border-white/5 hover:border-primary-500/50 dark:hover:border-primary-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group"
+              className="bg-white dark:bg-slate-900 rounded-[3.5rem] p-12 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className="flex items-start justify-between mb-8">
-                <div className="w-16 h-16 bg-primary-50 dark:bg-white/10 rounded-2xl flex items-center justify-center text-primary-600 dark:text-white group-hover:bg-primary-500 group-hover:text-white transition-colors duration-300">
-                  <span className="text-2xl font-bold">{service.title.charAt(0)}</span>
-                </div>
-                <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
-                  {service.price}
-                </span>
-              </div>
-
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">
-                {service.title}
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed h-20 overflow-hidden">
-                {service.description}
-              </p>
-
-              <div className="space-y-3 mb-8">
-                {service.features.map((feature, i) => (
-                  <div key={i} className="flex items-center text-sm text-slate-500 dark:text-slate-400">
-                    <Check className="w-5 h-5 text-primary-500 mr-3 flex-shrink-0" />
-                    {feature}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-12">
+                  <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                    <span className="text-3xl font-black">{service.title.charAt(0)}</span>
                   </div>
-                ))}
-              </div>
+                  <span className="inline-block px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20">
+                    {service.price}
+                  </span>
+                </div>
 
-              <div className="flex gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
-                <Link 
-                  to="/booking" 
-                  state={{ serviceId: service.id }}
-                  className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:opacity-90 transition-opacity"
-                >
-                  Book Now
-                  <ShoppingCart className="w-4 h-4 ml-2" />
-                </Link>
-                <Link 
-                  to="/contact"
-                  state={{ subject: `Quote for ${service.title}` }} 
-                  className="inline-flex items-center justify-center px-4 py-3 border border-slate-200 dark:border-white/20 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
-                >
-                  Get Quote
-                </Link>
+                <h3 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-6 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium text-lg">
+                  {service.description}
+                </p>
+
+                <div className="grid sm:grid-cols-2 gap-4 mb-12">
+                  {service.features.map((feature, i) => (
+                    <div key={i} className="flex items-center text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                      <div className="w-6 h-6 rounded-full bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
+                        <Check className="w-3 h-3 text-primary-600 dark:text-primary-400" />
+                      </div>
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
+                  <Link 
+                    to="/booking" 
+                    state={{ serviceId: service.id }}
+                    className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
+                  >
+                    Book Now
+                    <ShoppingCart className="w-5 h-5 ml-3" />
+                  </Link>
+                  <Link 
+                    to="/contact"
+                    state={{ subject: `Quote for ${service.title}` }} 
+                    className="inline-flex items-center justify-center px-8 py-4 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300"
+                  >
+                    Get Quote
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Engagement Models (Pricing) */}
-        <div className="mb-32">
-            <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Engagement Models</h2>
-                <p className="text-slate-600 dark:text-slate-400">Flexible pricing structures designed to fit your business needs.</p>
+        {/* Engagement Models - Split Layout Influence */}
+        <div className="mb-48">
+            <div className="text-center mb-24">
+                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary-600 dark:text-primary-400 mb-6">Partnership</h2>
+                <h3 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] mb-8">Engagement Models</h3>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">Flexible pricing structures designed to fit your business needs.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
                 {ENGAGEMENT_MODELS.map((model, idx) => (
-                    <div key={idx} className="bg-white dark:bg-white/5 rounded-3xl p-8 border border-slate-200 dark:border-white/5 flex flex-col hover:border-accent-purple/50 transition-all">
-                        <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center mb-6 text-slate-900 dark:text-white">
-                            <Briefcase className="w-6 h-6" />
+                    <div key={idx} className="bg-white dark:bg-slate-900 rounded-[3.5rem] p-12 border border-slate-200 dark:border-white/5 flex flex-col hover:border-accent-purple transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 group">
+                        <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-10 text-slate-900 dark:text-white group-hover:bg-accent-purple group-hover:text-white transition-all duration-500 shadow-inner">
+                            <Briefcase className="w-7 h-7" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{model.title}</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{model.description}</p>
-                        <div className="mb-6 p-4 bg-primary-50 dark:bg-primary-500/10 rounded-xl">
-                            <span className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider">Ideal For</span>
-                            <p className="text-slate-900 dark:text-white font-medium mt-1">{model.idealFor}</p>
+                        <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-accent-purple transition-colors">{model.title}</h3>
+                        <p className="text-slate-600 dark:text-slate-400 font-medium mb-10 leading-relaxed">{model.description}</p>
+                        
+                        <div className="mb-10 p-6 bg-accent-purple/5 rounded-3xl border border-accent-purple/10">
+                            <span className="text-[10px] font-black text-accent-purple uppercase tracking-[0.2em]">Ideal For</span>
+                            <p className="text-slate-900 dark:text-white font-black mt-2 text-lg">{model.idealFor}</p>
                         </div>
-                        <ul className="space-y-3 mb-8 flex-1">
+
+                        <ul className="space-y-4 mb-12 flex-1">
                             {model.features.map((feat, i) => (
-                                <li key={i} className="flex items-start text-sm text-slate-600 dark:text-slate-300">
-                                    <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5" />
+                                <li key={i} className="flex items-start text-sm font-bold text-slate-500 dark:text-slate-400">
+                                    <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center mr-3 mt-0.5">
+                                      <Check className="w-3 h-3 text-green-500" />
+                                    </div>
                                     {feat}
                                 </li>
                             ))}
@@ -97,7 +108,7 @@ const Services: React.FC = () => {
                          <Link 
                             to="/contact" 
                             state={{ subject: `Inquiry about ${model.title} Model` }}
-                            className="w-full py-3 rounded-xl border border-slate-200 dark:border-white/20 text-center font-bold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
+                            className="w-full py-5 rounded-2xl border border-slate-200 dark:border-white/10 text-center font-black uppercase tracking-widest text-slate-900 dark:text-white hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-slate-900 transition-all duration-500"
                         >
                             Choose Model
                         </Link>
@@ -106,24 +117,27 @@ const Services: React.FC = () => {
             </div>
         </div>
 
-        {/* Tech Stack Detail */}
-        <div className="bg-slate-50 dark:bg-white/5 rounded-[40px] p-12 md:p-20">
-            <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Our Technology Stack</h2>
-                    <p className="text-slate-600 dark:text-slate-400">We use the latest tools and frameworks to ensure your digital product is future-proof.</p>
+        {/* Tech Stack Detail - Technical Grid Style */}
+        <div className="bg-slate-900 dark:bg-white rounded-[4rem] p-12 md:p-24 transition-colors duration-500 shadow-2xl">
+            <div className="max-w-5xl mx-auto">
+                <div className="text-center mb-24">
+                    <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary-400 dark:text-primary-600 mb-6">Our Stack</h2>
+                    <h3 className="text-5xl md:text-7xl font-black tracking-tighter text-white dark:text-slate-900 leading-[0.9] mb-8">Technology Ecosystem</h3>
+                    <p className="text-lg text-slate-400 dark:text-slate-600 font-medium">We use the latest tools and frameworks to ensure your digital product is future-proof.</p>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-12">
+                <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
                     {TECH_STACK.map((stack, idx) => (
-                        <div key={idx}>
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                                <Code2 className="w-5 h-5 text-primary-500" />
+                        <div key={idx} className="group">
+                            <h3 className="text-2xl font-black tracking-tighter text-white dark:text-slate-900 mb-10 flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-white/5 dark:bg-slate-100 flex items-center justify-center text-primary-400 dark:text-primary-600 group-hover:scale-110 transition-transform duration-500">
+                                  <Code2 className="w-6 h-6" />
+                                </div>
                                 {stack.category}
                             </h3>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-4">
                                 {stack.technologies.map((tech, i) => (
-                                    <span key={i} className="px-4 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-600 dark:text-slate-300 shadow-sm">
+                                    <span key={i} className="px-6 py-3 rounded-xl bg-white/5 dark:bg-slate-50 border border-white/10 dark:border-slate-200 text-sm font-black uppercase tracking-widest text-slate-300 dark:text-slate-600 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 dark:hover:text-white transition-all duration-300 cursor-default">
                                         {tech}
                                     </span>
                                 ))}
@@ -134,21 +148,23 @@ const Services: React.FC = () => {
             </div>
         </div>
 
-        {/* Custom Solution CTA */}
-        <div className="mt-20 bg-gradient-to-r from-primary-600 to-accent-purple rounded-3xl p-12 text-center text-white relative overflow-hidden">
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold mb-4">Need a custom enterprise solution?</h3>
-              <p className="mb-8 max-w-2xl mx-auto text-white/90">
+        {/* Custom Solution CTA - Immersive Split */}
+        <div className="mt-32 relative rounded-[4rem] overflow-hidden bg-slate-900 dark:bg-slate-900 p-16 md:p-24 text-center text-white shadow-2xl group">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-600/20 via-accent-purple/20 to-accent-cyan/20 opacity-50 group-hover:scale-110 transition-transform duration-[3s]"></div>
+            
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] mb-8">Need a custom <br />enterprise solution?</h3>
+              <p className="mb-12 text-xl text-slate-300 font-medium leading-relaxed">
                 We specialize in complex implementations for large-scale organizations. Let's discuss your requirements.
               </p>
-              <Link to="/contact" className="inline-flex items-center px-8 py-3 bg-white text-primary-600 rounded-full font-bold hover:bg-slate-50 transition-colors">
-                Contact Sales Team <ArrowRight className="w-4 h-4 ml-2" />
+              <Link to="/contact" className="inline-flex items-center px-12 py-6 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
+                Contact Sales Team <ArrowRight className="w-6 h-6 ml-3" />
               </Link>
             </div>
             
-            {/* Background blobs */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary-600/20 rounded-full blur-[120px] transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-cyan/20 rounded-full blur-[120px] transform -translate-x-1/2 translate-y-1/2"></div>
         </div>
 
       </div>
