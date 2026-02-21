@@ -8,6 +8,7 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Portfolio from './pages/Portfolio';
 import Blog from './pages/Blog';
+import BlogPostDetail from './pages/BlogPostDetail';
 import AITools from './pages/AITools';
 import ServiceDetail from './pages/ServiceDetail';
 import WhyTekifyDetail from './pages/WhyTekifyDetail';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPostDetail />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>

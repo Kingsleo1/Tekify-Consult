@@ -23,6 +23,20 @@ const Home: React.FC = () => {
       
       {/* Hero Section - SaaS Split Layout Influence */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        {/* Immersive Background Atmosphere */}
+        <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
+          {/* Dynamic Gradients */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-500/20 via-transparent to-transparent dark:from-primary-500/10"></div>
+          
+          {/* Atmospheric Blobs - Recipe 7 Influence */}
+          <div className="absolute top-[-20%] left-[-10%] w-[60rem] h-[60rem] bg-accent-purple/10 dark:bg-accent-purple/5 rounded-full blur-[120px] animate-blob mix-blend-normal"></div>
+          <div className="absolute top-[10%] right-[-20%] w-[50rem] h-[50rem] bg-accent-cyan/10 dark:bg-accent-cyan/5 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-normal"></div>
+          <div className="absolute bottom-[-20%] left-[10%] w-[60rem] h-[60rem] bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-normal"></div>
+
+          {/* Technical Grid - Recipe 1 Influence */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-50 dark:opacity-100"></div>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="text-left">

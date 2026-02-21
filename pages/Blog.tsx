@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BLOG_POSTS } from '../constants';
-import { Calendar, User } from 'lucide-react';
+import { Calendar, User, ArrowRight } from 'lucide-react';
 import PageHero from '../components/PageHero';
 
 const Blog: React.FC = () => {
@@ -14,7 +15,7 @@ const Blog: React.FC = () => {
       <div className="py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-3 gap-12">
             {BLOG_POSTS.map((post) => (
-                <div key={post.id} className="flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-500 group">
+                <Link to={`/blog/${post.id}`} key={post.id} className="flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-500 group">
                     <div className="aspect-[4/3] overflow-hidden relative">
                         <img src={post.image} alt={post.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-[2s] grayscale group-hover:grayscale-0" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent"></div>
@@ -37,15 +38,15 @@ const Blog: React.FC = () => {
                             {post.excerpt}
                         </p>
                         <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-white/5">
-                          <button className="text-[10px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-primary-600 dark:text-primary-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                               Read Article
-                          </button>
+                          </span>
                           <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-primary-600 group-hover:border-primary-600 group-hover:text-white transition-all duration-500">
                             <ArrowRight className="w-4 h-4" />
                           </div>
                         </div>
                     </div>
-                </div>
+                </Link>
             ))}
         </div>
 

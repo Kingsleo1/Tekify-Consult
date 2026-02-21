@@ -134,8 +134,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         {/* Mobile Dropdown - Full Screen Immersive */}
         {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-[60] bg-background-light/95 dark:bg-background-darker/95 backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-300">
-            <div className="flex flex-col h-full p-8">
+          <div className="lg:hidden fixed inset-0 z-[60] bg-background-light/95 dark:bg-background-darker/95 backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-300 overflow-y-auto">
+            <div className="flex flex-col min-h-full p-8">
               <div className="flex justify-between items-center mb-12">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center text-white">

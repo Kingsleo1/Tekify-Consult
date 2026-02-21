@@ -8,7 +8,7 @@ export const BUSINESS_INFO = {
   whatsapp: "2348031175589", // International format
   address: "4th Floor Los Angeles Mall, Kado Abuja",
   mapUrl: "https://maps.google.com/?q=Los+Angeles+Mall,+Kado,+Abuja",
-  logo: "https://photos.google.com/photo/AF1QipPI5prEG-SVA3y2rzKFbF8QQZ9dNxN4J1fiA4th",
+  logo: "https://drive.google.com/uc?export=view&id=19jz5FTeD_4ULC8yqiW8vtsN9Oox4CAKW",
   socials: {
     facebook: "https://web.facebook.com/Mynaijakoncept",
     instagram: "https://www.instagram.com/tekifyconsult/",
@@ -230,21 +230,82 @@ export const BLOG_POSTS = [
     title: "The Future of AI in Business Automation",
     date: "Oct 12, 2023",
     excerpt: "How Generative AI is reshaping the landscape of corporate efficiency and decision making.",
-    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop",
+    content: `
+## The AI Revolution is Here
+
+Artificial Intelligence is no longer a futuristic concept; it's a present-day reality that is transforming how businesses operate. From predictive analytics to automated customer service, AI is driving efficiency and innovation across industries.
+
+### Generative AI: A Game Changer
+
+Generative AI, in particular, is revolutionizing content creation, code generation, and design. Tools like Gemini and GPT-4 are enabling businesses to produce high-quality content at scale, reducing the time and cost associated with traditional methods.
+
+### Key Benefits of AI Automation
+
+*   **Increased Efficiency:** AI can handle repetitive tasks, freeing up human workers to focus on more strategic initiatives.
+*   **Enhanced Decision Making:** AI algorithms can analyze vast amounts of data to provide actionable insights.
+*   **Improved Customer Experience:** AI-powered chatbots and personalized recommendations can significantly enhance customer satisfaction.
+
+### Conclusion
+
+The future of business automation is inextricably linked to AI. Companies that embrace this technology will be well-positioned to thrive in the digital age.
+    `
   },
   {
     id: 2,
     title: "Why Your Business Needs a Cloud Strategy",
     date: "Sep 28, 2023",
     excerpt: "Moving to the cloud isn't just about storage; it's about scalability, security, and speed.",
-    image: "https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?q=80&w=2000&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?q=80&w=2000&auto=format&fit=crop",
+    content: `
+## The Cloud Advantage
+
+In today's fast-paced digital world, a robust cloud strategy is essential for business success. Cloud computing offers unparalleled scalability, flexibility, and cost-efficiency.
+
+### Scalability and Flexibility
+
+One of the primary benefits of the cloud is the ability to scale resources up or down based on demand. This ensures that you only pay for what you use and can easily adapt to changing market conditions.
+
+### Enhanced Security
+
+Cloud providers invest heavily in security, offering advanced features like encryption, access controls, and threat detection. This often provides a higher level of security than on-premise solutions.
+
+### Cost Savings
+
+By moving to the cloud, businesses can reduce the capital expenditure associated with hardware and maintenance. Cloud services are typically offered on a pay-as-you-go basis, making them more affordable for businesses of all sizes.
+
+### Conclusion
+
+A well-defined cloud strategy can give your business a competitive edge. It enables you to innovate faster, reduce costs, and improve operational efficiency.
+    `
   },
   {
     id: 3,
     title: "UI/UX Trends to Watch in 2024",
     date: "Nov 05, 2023",
     excerpt: "From glassmorphism to bento grids, here are the design styles dominating the tech industry.",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop",
+    content: `
+## Designing for the Future
+
+User Interface (UI) and User Experience (UX) design are constantly evolving. Staying ahead of the latest trends is crucial for creating digital products that engage and delight users.
+
+### Glassmorphism
+
+Glassmorphism continues to be a popular trend, characterized by translucent backgrounds, blur effects, and subtle shadows. It creates a sense of depth and hierarchy, making interfaces feel modern and sophisticated.
+
+### Bento Grids
+
+Inspired by Japanese bento boxes, bento grids organize content into modular, rectangular blocks. This layout is highly flexible and responsive, making it ideal for complex dashboards and content-heavy websites.
+
+### Dark Mode
+
+Dark mode has become a standard feature in many applications. It reduces eye strain, saves battery life on OLED screens, and offers a sleek, premium aesthetic.
+
+### Conclusion
+
+By incorporating these trends into your design strategy, you can create user experiences that are not only visually appealing but also intuitive and functional.
+    `
   }
 ];
 
