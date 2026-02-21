@@ -160,28 +160,92 @@ export const PROJECTS = [
     title: "FinTech Dashboard Overhaul",
     category: "Web Development",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop",
-    description: "A complete redesign of a banking dashboard focusing on user experience and real-time data visualization. Resulted in a 40% increase in user engagement."
+    description: "A complete redesign of a banking dashboard focusing on user experience and real-time data visualization. Resulted in a 40% increase in user engagement.",
+    content: `
+## The Challenge
+Our client, a leading financial institution, was struggling with a legacy dashboard that was difficult for users to navigate and lacked real-time data capabilities. The goal was to create a modern, intuitive interface that would empower users to manage their finances more effectively.
+
+## The Solution
+We conducted extensive user research to identify pain points and design a solution that met the needs of both novice and experienced users. Key features included:
+*   **Real-time Data Visualization:** Interactive charts and graphs that provide up-to-the-minute insights into financial performance.
+*   **Intuitive Navigation:** A streamlined menu and search functionality that make it easy to find information.
+*   **Personalized Dashboards:** Users can customize their dashboards to show the information that is most relevant to them.
+
+## The Result
+The new dashboard was a resounding success, resulting in a:
+*   **40% Increase in User Engagement:** Users are spending more time on the platform and interacting with more features.
+*   **25% Reduction in Support Tickets:** The intuitive design has made it easier for users to find answers to their questions.
+*   **Positive User Feedback:** Users have praised the dashboard for its ease of use and modern aesthetic.
+    `
   },
   {
     id: 2,
     title: "AI Customer Support Bot",
     category: "AI & Automation",
     image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=2000&auto=format&fit=crop",
-    description: "Implemented a Gemini-powered support agent for a major e-commerce retailer, reducing ticket load by 60% and providing instant 24/7 responses."
+    description: "Implemented a Gemini-powered support agent for a major e-commerce retailer, reducing ticket load by 60% and providing instant 24/7 responses.",
+    content: `
+## The Challenge
+A major e-commerce retailer was overwhelmed by a high volume of customer support tickets, leading to long wait times and decreased customer satisfaction. They needed a solution that could handle common inquiries quickly and efficiently.
+
+## The Solution
+We implemented a Gemini-powered support agent that was trained on the retailer's proprietary data. The bot was integrated into the retailer's website and mobile app, providing instant 24/7 responses to common questions about:
+*   **Order Status:** Users can track their orders in real-time.
+*   **Returns and Refunds:** The bot guides users through the return process.
+*   **Product Information:** Users can get detailed information about products.
+
+## The Result
+The AI support bot has significantly improved the retailer's customer support operations, resulting in a:
+*   **60% Reduction in Ticket Load:** The bot handles the majority of common inquiries, freeing up human agents to focus on more complex issues.
+*   **90% Customer Satisfaction Rate:** Users have praised the bot for its speed and accuracy.
+*   **Significant Cost Savings:** The retailer has reduced its customer support costs by 30%.
+    `
   },
   {
     id: 3,
     title: "EcoEnergy Mobile App",
     category: "Mobile Development",
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2670&auto=format&fit=crop",
-    description: "Cross-platform app for tracking solar energy usage and grid contribution in real-time. Features IoT integration and predictive usage analytics."
+    description: "Cross-platform app for tracking solar energy usage and grid contribution in real-time. Features IoT integration and predictive usage analytics.",
+    content: `
+## The Challenge
+EcoEnergy, a renewable energy company, wanted to provide its customers with a way to track their solar energy usage and grid contribution in real-time. They needed a mobile app that was easy to use and provided actionable insights.
+
+## The Solution
+We developed a cross-platform mobile app using React Native that integrates with EcoEnergy's IoT devices. Key features include:
+*   **Real-time Monitoring:** Users can see how much energy their solar panels are producing and how much they are consuming.
+*   **Predictive Analytics:** The app uses machine learning to predict future energy usage and suggest ways to save money.
+*   **Grid Contribution Tracking:** Users can see how much energy they are contributing back to the grid.
+
+## The Result
+The EcoEnergy mobile app has been a huge hit with customers, resulting in a:
+*   **50% Increase in Customer Engagement:** Users are checking the app multiple times a day to track their energy usage.
+*   **20% Reduction in Energy Costs:** Users are using the app's insights to reduce their energy consumption.
+*   **Positive Brand Recognition:** EcoEnergy has been recognized as a leader in the renewable energy industry.
+    `
   },
   {
     id: 4,
     title: "Cloud Migration Strategy",
     category: "Cloud Infrastructure",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2672&auto=format&fit=crop",
-    description: "Seamless migration of legacy on-premise servers to AWS for a logistics company, improving uptime to 99.99% and reducing operational costs."
+    description: "Seamless migration of legacy on-premise servers to AWS for a logistics company, improving uptime to 99.99% and reducing operational costs.",
+    content: `
+## The Challenge
+A logistics company was struggling with a legacy on-premise server infrastructure that was prone to downtime and expensive to maintain. They needed a more reliable and scalable solution.
+
+## The Solution
+We developed a comprehensive cloud migration strategy to move the company's infrastructure to AWS. The migration was completed in phases to minimize disruption to the company's operations. Key steps included:
+*   **Assessment and Planning:** We conducted a thorough assessment of the company's existing infrastructure and developed a detailed migration plan.
+*   **Data Migration:** We securely migrated the company's data to AWS.
+*   **Application Migration:** We migrated the company's applications to AWS, ensuring that they were optimized for the cloud.
+
+## The Result
+The migration to AWS has significantly improved the company's IT operations, resulting in a:
+*   **99.99% Uptime:** The new infrastructure is highly reliable and has virtually eliminated downtime.
+*   **30% Reduction in Operational Costs:** The company has reduced its IT maintenance costs by moving to the cloud.
+*   **Improved Scalability:** The company can now easily scale its infrastructure to meet changing demand.
+    `
   }
 ];
 
