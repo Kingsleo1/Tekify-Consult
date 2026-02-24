@@ -2,9 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Bot, Image as ImageIcon, Video, Mic, MapPin, Zap, Brain, 
   Sparkles, Send, Upload, Play, Loader2, Music, Volume2, 
-  Languages, FileAudio, ExternalLink 
+  Languages, FileAudio, ExternalLink, Download 
 } from 'lucide-react';
 import PageHero from '../components/PageHero';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 import { 
   generateTextContent, 
   generateImage, 
@@ -103,7 +107,12 @@ const ChatTool: React.FC = () => {
          }
       }
 
-      const result = await generateTextContent(userMsg, mode, location);
+      const result = await generateTextContent(
+        userMsg, 
+        mode, 
+        location, 
+        "You are the official AI assistant for Tekify Consult. You are knowledgeable about everything concerning the site, our services (Digital Marketing, Web & App Development, Cloud Architecture, AI Integration), and our pricing. You should be helpful, professional, and able to talk to customers about any area of our business. Format your responses with clear headings, subheadings, numbers, and bullet points for readability. Do not use * or # for formatting; use standard HTML/Markdown structure that renders well."
+      );
       setMessages(prev => [...prev, { 
         role: 'model', 
         text: result.text || "No response generated.",
@@ -113,6 +122,29 @@ const ChatTool: React.FC = () => {
       setMessages(prev => [...prev, { role: 'model', text: "Error: Could not generate response." }]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const downloadPDF = (elementId: string) => {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    const opt = {
+      margin:       0.5,
+      filename:     'ai-response.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
+
+  const listenToText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Text-to-speech is not supported in your browser.");
     }
   };
 
@@ -162,7 +194,15 @@ const ChatTool: React.FC = () => {
                 ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-br-none shadow-2xl' 
                 : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 rounded-bl-none shadow-xl border border-slate-100 dark:border-white/5'
             }`}>
-              <div className="whitespace-pre-wrap">{msg.text}</div>
+              {msg.role === 'model' ? (
+                <div id={`response-${i}`}>
+                  <div className="markdown-body prose dark:prose-invert max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                  </div>
+                </div>
+              ) : (
+                <div className="whitespace-pre-wrap">{msg.text}</div>
+              )}
               
               {/* Maps Grounding Display */}
               {msg.metadata?.groundingChunks && (
@@ -182,6 +222,17 @@ const ChatTool: React.FC = () => {
                       })}
                     </div>
                  </div>
+              )}
+
+              {msg.role === 'model' && (
+                <div className="mt-6 flex gap-4 border-t border-slate-100 dark:border-white/10 pt-4">
+                  <button onClick={() => downloadPDF(`response-${i}`)} className="text-xs font-bold text-slate-500 hover:text-primary-600 flex items-center gap-2 transition-colors">
+                    <Download className="w-4 h-4" /> Download PDF
+                  </button>
+                  <button onClick={() => listenToText(msg.text)} className="text-xs font-bold text-slate-500 hover:text-primary-600 flex items-center gap-2 transition-colors">
+                    <Volume2 className="w-4 h-4" /> Listen
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -206,7 +257,7 @@ const ChatTool: React.FC = () => {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1 px-8 py-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium text-lg"
+            className="flex-1 px-8 py-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium text-lg text-slate-900 dark:text-white"
           />
           <button 
             onClick={handleSend}
@@ -287,7 +338,7 @@ const VisionTool: React.FC = () => {
             <textarea 
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 h-48 focus:ring-2 focus:ring-accent-purple outline-none transition-all font-medium text-lg"
+              className="w-full p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 h-48 focus:ring-2 focus:ring-accent-purple outline-none transition-all font-medium text-lg text-slate-900 dark:text-white"
               placeholder={subTab === 'generate' ? "A futuristic cyberpunk city..." : "Describe this image..."}
             />
           </div>
@@ -443,7 +494,7 @@ const AudioTool: React.FC = () => {
              <textarea 
                value={text} 
                onChange={(e) => setText(e.target.value)}
-               className="w-full p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 h-56 focus:ring-2 focus:ring-accent-cyan outline-none transition-all font-medium text-lg"
+               className="w-full p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 h-56 focus:ring-2 focus:ring-accent-cyan outline-none transition-all font-medium text-lg text-slate-900 dark:text-white"
                placeholder="Enter text to speak..."
              />
              <button 

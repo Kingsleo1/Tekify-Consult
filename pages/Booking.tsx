@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Calendar, Clock, User, Mail, Phone, CheckCircle2, CreditCard, MessageCircle } from 'lucide-react';
-import { SERVICES } from '../constants';
+import { Calendar, Clock, User, Mail, Phone, CheckCircle2, CreditCard, MessageCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '../services/supabaseClient';
+import { ServicePlan } from '../types';
+import { BUSINESS_INFO } from '../constants';
 import PageHero from '../components/PageHero';
 
 const InputWrapper = ({ icon: Icon, children }: { icon: any, children?: React.ReactNode }) => (
@@ -17,6 +20,9 @@ const Booking: React.FC = () => {
   
   const [step, setStep] = useState(1);
   const [bookingMethod, setBookingMethod] = useState<'online' | 'whatsapp'>('online');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [services, setServices] = useState<ServicePlan[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({
     service: initialServiceId,
     date: '',
@@ -27,19 +33,30 @@ const Booking: React.FC = () => {
     notes: ''
   });
 
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data } = await supabase.from('tekify_services').select('*').order('name');
+      setServices(data || []);
+      setLoadingServices(false);
+    };
+    fetchServices();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
+    const serviceDetails = services.find(s => s.id === formData.service);
+
     if (bookingMethod === 'whatsapp') {
-      const serviceDetails = SERVICES.find(s => s.id === formData.service);
       const text = `*New Booking Request*%0A%0A` +
         `I would like to book a service:%0A` +
-        `*Service:* ${serviceDetails?.title || 'Not Selected'}%0A` +
-        `*Price Estimate:* ${serviceDetails?.price || 'N/A'}%0A` +
+        `*Service:* ${serviceDetails?.name || 'Not Selected'}%0A` +
+        `*Price Estimate:* ₦${Number(serviceDetails?.price || 0).toLocaleString()}%0A` +
         `*Date:* ${formData.date}%0A` +
         `*Time:* ${formData.time}%0A%0A` +
         `*Customer Details:*%0A` +
@@ -49,9 +66,37 @@ const Booking: React.FC = () => {
         `Notes: ${formData.notes}`;
        
        window.open(`https://wa.me/${BUSINESS_INFO.whatsapp}?text=${text}`, '_blank');
+       setStep(3);
+    } else {
+      try {
+        const response = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: {
+              full_name: formData.name,
+              email: formData.email,
+              phone: formData.phone
+            },
+            serviceId: formData.service,
+            notes: formData.notes
+          })
+        });
+
+        if (response.ok) {
+          setStep(3);
+          toast.success("Booking request submitted successfully!");
+        } else {
+          const err = await response.json();
+          toast.error(`Error: ${err.error}`);
+        }
+      } catch (error) {
+        console.error("Booking Submission Error:", error);
+        toast.error("Failed to submit booking. Please try again.");
+      }
     }
     
-    setStep(3); // Success state
+    setIsSubmitting(false);
   };
 
   const inputClasses = "w-full pl-16 pr-6 py-5 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 font-medium";
@@ -97,8 +142,8 @@ const Booking: React.FC = () => {
                         required
                       >
                         <option value="" className="bg-white dark:bg-slate-800">Select a service...</option>
-                        {SERVICES.map(s => (
-                          <option key={s.id} value={s.id} className="bg-white dark:bg-slate-800">{s.title} - {s.price}</option>
+                        {services.map(s => (
+                          <option key={s.id} value={s.id} className="bg-white dark:bg-slate-800">{s.name} - ₦{Number(s.price).toLocaleString()}</option>
                         ))}
                       </select>
                       <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -262,12 +307,12 @@ const Booking: React.FC = () => {
                 <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-md mx-auto font-medium leading-relaxed">
                     {bookingMethod === 'whatsapp' 
                     ? "We are redirecting you to our WhatsApp line to finalize your booking details."
-                    : `Thanks ${formData.name}. We've logged your request for ${SERVICES.find(s => s.id === formData.service)?.title}.`
+                    : `Thanks ${formData.name}. We've logged your request for ${services.find(s => s.id === formData.service)?.name}.`
                     }
                 </p>
                 {bookingMethod === 'online' && (
                     <div className="p-8 bg-slate-50 dark:bg-white/5 rounded-[2rem] text-sm font-bold text-slate-500 dark:text-slate-400 mb-12 border border-slate-200 dark:border-white/5">
-                        Check your inbox ({formData.email}) for the confirmation ticket.
+                        {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : `Check your inbox (${formData.email}) for the confirmation ticket.`}
                     </div>
                 )}
                 <Link to="/" className="inline-block bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black uppercase tracking-widest px-16 py-6 rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">

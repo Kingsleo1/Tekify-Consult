@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, ChevronUp, Users, Clock, Award } from 'lucide-react';
-import { SERVICES, PROJECTS, TESTIMONIALS, FAQS, TECH_STACK, WHY_TEKIFY_ITEMS, PROCESS_STEPS } from '../constants';
+import { ArrowRight, CheckCircle2, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, ChevronUp, Users, Clock, Award, Loader2 } from 'lucide-react';
+import { PROJECTS, TESTIMONIALS, FAQS, TECH_STACK, WHY_TEKIFY_ITEMS, PROCESS_STEPS } from '../constants';
+import { supabase } from '../services/supabaseClient';
 
 const Home: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [services, setServices] = useState<any[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data } = await supabase.from('tekify_services').select('*').order('name');
+      setServices(data || []);
+      setLoadingServices(false);
+    };
+    fetchServices();
+  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -238,76 +250,93 @@ const Home: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Large Card */}
-          <Link to="/services/web-dev" className="md:col-span-2 relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-primary-500 transition-all duration-500 shadow-sm block">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <div className="w-16 h-16 rounded-3xl bg-primary-600 flex items-center justify-center text-white mb-10 shadow-2xl shadow-primary-600/30">
-                  <Globe className="w-8 h-8" />
-                </div>
-                <h3 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">Enterprise Web Development</h3>
-                <p className="text-slate-600 dark:text-slate-400 max-w-md font-medium text-lg leading-relaxed">Scalable, high-performance web applications built with React, Next.js, and modern cloud architecture.</p>
-              </div>
-              <div className="mt-12">
-                 <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop" className="rounded-[2.5rem] w-full h-64 object-cover grayscale group-hover:grayscale-0 transition-all duration-700 shadow-2xl" alt="Web Dev" />
-              </div>
-            </div>
-          </Link>
+        {loadingServices ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin text-primary-600" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {services.length > 0 ? (
+              <>
+                {/* Large Card - First Service */}
+                <Link to={`/services/${services[0].id}`} className="md:col-span-2 relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-primary-500 transition-all duration-500 shadow-sm block">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                    <div>
+                      <div className="w-16 h-16 rounded-3xl bg-primary-600 flex items-center justify-center text-white mb-10 shadow-2xl shadow-primary-600/30">
+                        <Globe className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{services[0].name}</h3>
+                      <p className="text-slate-600 dark:text-slate-400 max-w-md font-medium text-lg leading-relaxed">{services[0].description}</p>
+                    </div>
+                    <div className="mt-12">
+                       <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop" className="rounded-[2.5rem] w-full h-64 object-cover grayscale group-hover:grayscale-0 transition-all duration-700 shadow-2xl" alt="Web Dev" />
+                    </div>
+                  </div>
+                </Link>
 
-          {/* Tall Card */}
-          <Link to="/services/ai-consulting" className="md:row-span-2 relative group overflow-hidden rounded-[4rem] bg-slate-900 dark:bg-white border border-white/5 dark:border-slate-200 p-12 hover:border-accent-purple transition-all duration-500 shadow-2xl block">
-             <div className="absolute inset-0 bg-gradient-to-b from-accent-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-             <div className="relative z-10 h-full flex flex-col">
-                <div className="w-16 h-16 rounded-3xl bg-accent-purple flex items-center justify-center text-white mb-10 shadow-2xl shadow-accent-purple/30">
-                  <Cpu className="w-8 h-8" />
-                </div>
-                <h3 className="text-4xl font-black tracking-tighter text-white dark:text-slate-900 mb-4 group-hover:text-accent-purple transition-colors">AI & Automation</h3>
-                <p className="text-slate-400 dark:text-slate-600 mb-12 font-medium text-lg leading-relaxed">Integrate Gemini, GPT-4, and custom ML models to automate your workflow.</p>
-                
-                <div className="flex-1 rounded-[3rem] bg-white/5 dark:bg-slate-50 backdrop-blur-sm border border-white/10 dark:border-slate-200 p-8 space-y-6">
-                   {/* Chat UI Simulation */}
-                   <div className="flex gap-4">
-                     <div className="w-10 h-10 rounded-2xl bg-accent-purple/50"></div>
-                     <div className="h-10 w-32 bg-white/10 dark:bg-slate-200 rounded-xl"></div>
-                   </div>
-                   <div className="flex gap-4 justify-end">
-                     <div className="h-20 w-48 bg-primary-500/20 dark:bg-primary-500/10 rounded-2xl"></div>
-                     <div className="w-10 h-10 rounded-2xl bg-slate-500/50"></div>
-                   </div>
-                   <div className="flex gap-4">
-                     <div className="w-10 h-10 rounded-2xl bg-accent-purple/50"></div>
-                     <div className="h-24 w-full bg-white/10 dark:bg-slate-200 rounded-xl"></div>
-                   </div>
-                </div>
-             </div>
-          </Link>
+                {/* Tall Card - Second Service */}
+                {services[1] && (
+                  <Link to={`/services/${services[1].id}`} className="md:row-span-2 relative group overflow-hidden rounded-[4rem] bg-slate-900 dark:bg-white border border-white/5 dark:border-slate-200 p-12 hover:border-accent-purple transition-all duration-500 shadow-2xl block">
+                    <div className="absolute inset-0 bg-gradient-to-b from-accent-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative z-10 h-full flex flex-col">
+                       <div className="w-16 h-16 rounded-3xl bg-accent-purple flex items-center justify-center text-white mb-10 shadow-2xl shadow-accent-purple/30">
+                         <Cpu className="w-8 h-8" />
+                       </div>
+                       <h3 className="text-4xl font-black tracking-tighter text-white dark:text-slate-900 mb-4 group-hover:text-accent-purple transition-colors">{services[1].name}</h3>
+                       <p className="text-slate-400 dark:text-slate-600 mb-12 font-medium text-lg leading-relaxed">{services[1].description}</p>
+                       
+                       <div className="flex-1 rounded-[3rem] bg-white/5 dark:bg-slate-50 backdrop-blur-sm border border-white/10 dark:border-slate-200 p-8 space-y-6">
+                          <div className="flex gap-4">
+                            <div className="w-10 h-10 rounded-2xl bg-accent-purple/50"></div>
+                            <div className="h-10 w-32 bg-white/10 dark:bg-slate-200 rounded-xl"></div>
+                          </div>
+                          <div className="flex gap-4 justify-end">
+                            <div className="h-20 w-48 bg-primary-500/20 dark:bg-primary-500/10 rounded-2xl"></div>
+                            <div className="w-10 h-10 rounded-2xl bg-slate-500/50"></div>
+                          </div>
+                          <div className="flex gap-4">
+                            <div className="w-10 h-10 rounded-2xl bg-accent-purple/50"></div>
+                            <div className="h-24 w-full bg-white/10 dark:bg-slate-200 rounded-xl"></div>
+                          </div>
+                       </div>
+                    </div>
+                  </Link>
+                )}
 
-          {/* Medium Card */}
-          <Link to="/services/cloud-it" className="relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-accent-cyan transition-all duration-500 shadow-sm block">
-             <div className="absolute inset-0 bg-gradient-to-tr from-accent-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-             <div className="relative z-10">
-               <div className="w-16 h-16 rounded-3xl bg-accent-cyan flex items-center justify-center text-white mb-10 shadow-2xl shadow-accent-cyan/30">
-                  <Shield className="w-8 h-8" />
-                </div>
-                <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-accent-cyan transition-colors">Cloud Security</h3>
-                <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">AWS, Azure, and GCP solutions for maximum uptime and security.</p>
-             </div>
-          </Link>
+                {/* Medium Card - Third Service */}
+                {services[2] && (
+                  <Link to={`/services/${services[2].id}`} className="relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-accent-cyan transition-all duration-500 shadow-sm block">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-accent-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative z-10">
+                      <div className="w-16 h-16 rounded-3xl bg-accent-cyan flex items-center justify-center text-white mb-10 shadow-2xl shadow-accent-cyan/30">
+                         <Shield className="w-8 h-8" />
+                       </div>
+                       <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-accent-cyan transition-colors">{services[2].name}</h3>
+                       <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">{services[2].description}</p>
+                    </div>
+                  </Link>
+                )}
 
-           {/* Medium Card */}
-          <Link to="/services/digital-marketing" className="relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-pink-500 transition-all duration-500 shadow-sm block">
-             <div className="absolute inset-0 bg-gradient-to-tr from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-             <div className="relative z-10">
-               <div className="w-16 h-16 rounded-3xl bg-pink-500 flex items-center justify-center text-white mb-10 shadow-2xl shadow-pink-500/30">
-                  <Zap className="w-8 h-8" />
-                </div>
-                <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-pink-500 transition-colors">Digital Strategy</h3>
-                <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">Data-driven SEO and PPC campaigns that convert leads into revenue.</p>
-             </div>
-          </Link>
-        </div>
+                {/* Medium Card - Fourth Service */}
+                {services[3] && (
+                  <Link to={`/services/${services[3].id}`} className="relative group overflow-hidden rounded-[4rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 p-12 hover:border-pink-500 transition-all duration-500 shadow-sm block">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative z-10">
+                      <div className="w-16 h-16 rounded-3xl bg-pink-500 flex items-center justify-center text-white mb-10 shadow-2xl shadow-pink-500/30">
+                         <Zap className="w-8 h-8" />
+                       </div>
+                       <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-4 group-hover:text-pink-500 transition-colors">{services[3].name}</h3>
+                       <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">{services[3].description}</p>
+                    </div>
+                  </Link>
+                )}
+              </>
+            ) : (
+              <div className="col-span-3 text-center py-20 text-slate-400 font-bold">No services found.</div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* Selected Works Preview - Immersive Cards */}

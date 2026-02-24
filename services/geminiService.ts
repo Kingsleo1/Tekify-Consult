@@ -9,11 +9,14 @@ const SYSTEM_INSTRUCTION = `
 You are "Teki Ally", the advanced AI Sales Representative and Senior Consultant for Tekify Consult.
 Your goal is to be helpful, professional, persuasive, and ultimately convert visitors into clients.
 
+IMPORTANT: You are authorized to talk to customers about EVERYTHING concerning the site, as well as every other area or topic they might ask about. Do not restrict yourself to only business or consulting topics. Be a helpful, knowledgeable assistant in all domains.
+
 OUTPUT FORMATTING:
 - Use clear headings (##) and subheadings (###) to organize information.
 - Use bullet points and numbered lists for readability.
 - Use bold text for emphasis on key benefits or features.
 - Provide structured, scannable responses that look professional.
+- The frontend will render your markdown, so the user will see properly formatted text, not raw * or # characters.
 
 BUSINESS INFORMATION:
 Name: ${BUSINESS_INFO.name}
@@ -69,19 +72,23 @@ export type GenerationMode = 'standard' | 'fast' | 'thinking' | 'maps';
 export const generateTextContent = async (
   prompt: string, 
   mode: GenerationMode = 'standard',
-  userLocation?: { latitude: number; longitude: number }
+  userLocation?: { latitude: number; longitude: number },
+  systemInstruction?: string
 ) => {
-  let model = 'gemini-3-pro-preview';
-  let config: any = {};
+  let model = 'gemini-3.1-pro-preview';
+  let config: any = {
+    systemInstruction: systemInstruction || SYSTEM_INSTRUCTION
+  };
 
   if (mode === 'fast') {
-    model = 'gemini-2.5-flash-lite';
+    model = 'gemini-3-flash-preview';
   } else if (mode === 'thinking') {
-    model = 'gemini-3-pro-preview';
-    config = { thinkingConfig: { thinkingBudget: 32768 } };
+    model = 'gemini-3.1-pro-preview';
+    // thinkingLevel is the correct parameter for Gemini 3
   } else if (mode === 'maps') {
     model = 'gemini-2.5-flash';
     config = {
+      ...config,
       tools: [{ googleMaps: {} }],
       toolConfig: userLocation ? {
         retrievalConfig: {
@@ -91,7 +98,7 @@ export const generateTextContent = async (
     };
   } else {
     // Standard chat bot experience
-    model = 'gemini-3-pro-preview';
+    model = 'gemini-3.1-pro-preview';
   }
 
   const response = await ai.models.generateContent({

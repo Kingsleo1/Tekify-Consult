@@ -52,23 +52,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             {/* Logo */}
             <NavLink to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group">
               <div className="relative">
-                {!logoError ? (
+                {!logoError && (
                   <img 
                     src={BUSINESS_INFO.logo} 
                     alt={`${BUSINESS_INFO.name} Logo`}
                     onError={() => setLogoError(true)}
+                    referrerPolicy="no-referrer"
                     className="h-12 w-auto object-contain transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
                   />
-                ) : (
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Hexagon className="w-6 h-6 fill-current" />
-                  </div>
                 )}
                 <div className="absolute -inset-1 bg-primary-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
-                  Tekify<span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
+                  Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
                 </h1>
               </div>
             </NavLink>
@@ -138,11 +135,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="flex flex-col min-h-full p-8">
               <div className="flex justify-between items-center mb-12">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center text-white">
-                    <Hexagon className="w-6 h-6 fill-current" />
-                  </div>
+                  {!logoError && (
+                    <img 
+                      src={BUSINESS_INFO.logo} 
+                      alt={`${BUSINESS_INFO.name} Logo`}
+                      onError={() => setLogoError(true)}
+                      referrerPolicy="no-referrer"
+                      className="h-10 w-auto object-contain"
+                    />
+                  )}
                   <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
-                    Tekify<span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
+                    Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
                   </h1>
                 </div>
                 <button
@@ -199,11 +202,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             {/* Brand Info */}
             <div className="space-y-8">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-600 to-accent-purple rounded-2xl flex items-center justify-center text-white shadow-xl">
-                  <Hexagon className="w-7 h-7 fill-current" />
-                </div>
+                {!logoError && (
+                  <img 
+                    src={BUSINESS_INFO.logo} 
+                    alt={`${BUSINESS_INFO.name} Logo`}
+                    onError={() => setLogoError(true)}
+                    referrerPolicy="no-referrer"
+                    className="h-12 w-auto object-contain"
+                  />
+                )}
                 <h2 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
-                  Tekify<span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
+                  Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
                 </h2>
               </div>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-medium">
@@ -298,6 +307,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               &copy; {new Date().getFullYear()} Tekify Consult. Engineered for the future.
             </p>
             <div className="flex items-center gap-8">
+              <Link to="/admin" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Admin Portal</Link>
               <Link to="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Privacy Policy</Link>
               <Link to="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Terms of Service</Link>
             </div>

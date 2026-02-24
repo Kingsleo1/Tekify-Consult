@@ -14,6 +14,18 @@ import AITools from './pages/AITools';
 import ServiceDetail from './pages/ServiceDetail';
 import WhyTekifyDetail from './pages/WhyTekifyDetail';
 import ProcessDetail from './pages/ProcessDetail';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminBookings from './pages/admin/AdminBookings';
+import AdminInvoices from './pages/admin/AdminInvoices';
+import AdminReceipts from './pages/admin/AdminReceipts';
+import AdminEmailLogs from './pages/admin/AdminEmailLogs';
+import AdminServices from './pages/admin/AdminServices';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminCustomers from './pages/admin/AdminCustomers';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import { Toaster } from 'sonner';
 import TekiAlly from './components/TekiAlly';
 import WhatsAppButton from './components/WhatsAppButton';
 
@@ -34,10 +46,25 @@ const App: React.FC = () => {
           <Route path="/blog/:id" element={<BlogPostDetail />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="bookings" element={<AdminBookings />} />
+            <Route path="invoices" element={<AdminInvoices />} />
+            <Route path="receipts" element={<AdminReceipts />} />
+            <Route path="services" element={<AdminServices />} />
+            <Route path="emails" element={<AdminEmailLogs />} />
+          </Route>
         </Routes>
       </Layout>
       <TekiAlly />
       <WhatsAppButton />
+      <Toaster position="top-right" richColors />
     </Router>
   );
 };

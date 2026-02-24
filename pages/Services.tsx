@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ArrowRight, ShoppingCart, Code2, Briefcase } from 'lucide-react';
-import { SERVICES, ENGAGEMENT_MODELS, TECH_STACK } from '../constants';
+import { Check, ArrowRight, ShoppingCart, Code2, Briefcase, Loader2 } from 'lucide-react';
+import { ENGAGEMENT_MODELS, TECH_STACK } from '../constants';
+import { supabase } from '../services/supabaseClient';
+import { ServicePlan } from '../types';
 import PageHero from '../components/PageHero';
 
 const Services: React.FC = () => {
+  const [services, setServices] = useState<ServicePlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      const { data } = await supabase
+        .from('tekify_services')
+        .select('*')
+        .order('category', { ascending: true });
+      setServices(data || []);
+      setLoading(false);
+    };
+    fetchServices();
+  }, []);
+
   return (
     <div className="min-h-screen transition-colors duration-500">
       <PageHero 
@@ -15,64 +32,70 @@ const Services: React.FC = () => {
       <div className="py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Services Grid - Modern Immersive Cards */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-48">
-          {SERVICES.map((service, idx) => (
-            <div 
-              key={service.id} 
-              className="bg-white dark:bg-slate-900 rounded-[3.5rem] p-12 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden"
-              style={{ animationDelay: `${idx * 100}ms` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-12">
-                  <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary-600 group-hover:text-white transition-all duration-500 shadow-inner">
-                    <span className="text-3xl font-black">{service.title.charAt(0)}</span>
-                  </div>
-                  <span className="inline-block px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20">
-                    {service.price}
-                  </span>
-                </div>
-
-                <h3 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-6 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium text-lg">
-                  {service.description}
-                </p>
-
-                <div className="grid sm:grid-cols-2 gap-4 mb-12">
-                  {service.features.map((feature, i) => (
-                    <div key={i} className="flex items-center text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                      <div className="w-6 h-6 rounded-full bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
-                        <Check className="w-3 h-3 text-primary-600 dark:text-primary-400" />
-                      </div>
-                      {feature}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin text-primary-600" />
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-2 gap-12 mb-48">
+            {services.map((service, idx) => (
+              <div 
+                key={service.id} 
+                className="bg-white dark:bg-slate-900 rounded-[3.5rem] p-12 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden"
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-12">
+                    <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                      <span className="text-3xl font-black">{service.name.charAt(0)}</span>
                     </div>
-                  ))}
-                </div>
+                    <span className="inline-block px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-500/20">
+                      ₦{Number(service.price).toLocaleString()}
+                    </span>
+                  </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
-                  <Link 
-                    to="/booking" 
-                    state={{ serviceId: service.id }}
-                    className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
-                  >
-                    Book Now
-                    <ShoppingCart className="w-5 h-5 ml-3" />
-                  </Link>
-                  <Link 
-                    to="/contact"
-                    state={{ subject: `Quote for ${service.title}` }} 
-                    className="inline-flex items-center justify-center px-8 py-4 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300"
-                  >
-                    Get Quote
-                  </Link>
+                  <h3 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-6 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    {service.name}
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium text-lg">
+                    {service.category}
+                  </p>
+
+                  <div className="grid sm:grid-cols-2 gap-4 mb-12">
+                    {service.features.map((feature, i) => (
+                      <div key={i} className="flex items-center text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        <div className="w-6 h-6 rounded-full bg-primary-500/10 flex items-center justify-center mr-3 flex-shrink-0">
+                          <Check className="w-3 h-3 text-primary-600 dark:text-primary-400" />
+                        </div>
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
+                    <Link 
+                      to="/booking" 
+                      state={{ serviceId: service.id }}
+                      className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
+                    >
+                      Book Now
+                      <ShoppingCart className="w-5 h-5 ml-3" />
+                    </Link>
+                    <Link 
+                      to="/contact"
+                      state={{ subject: `Quote for ${service.name}` }} 
+                      className="inline-flex items-center justify-center px-8 py-4 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300"
+                    >
+                      Get Quote
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Engagement Models - Split Layout Influence */}
         <div className="mb-48">

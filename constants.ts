@@ -8,7 +8,12 @@ export const BUSINESS_INFO = {
   whatsapp: "2348031175589", // International format
   address: "4th Floor Los Angeles Mall, Kado Abuja",
   mapUrl: "https://maps.google.com/?q=Los+Angeles+Mall,+Kado,+Abuja",
-  logo: "https://drive.google.com/uc?export=view&id=19jz5FTeD_4ULC8yqiW8vtsN9Oox4CAKW",
+  logo: "/api/logo",
+  accountDetails: {
+    bankName: "Guaranty Trust Bank (GTB)",
+    accountName: "Tekify Consult",
+    accountNumber: "0123456789"
+  },
   socials: {
     facebook: "https://web.facebook.com/Mynaijakoncept",
     instagram: "https://www.instagram.com/tekifyconsult/",

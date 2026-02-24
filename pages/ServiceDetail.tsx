@@ -1,25 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { SERVICES } from '../constants';
-import { Check, ArrowRight, Globe, Smartphone, Bot, TrendingUp, Cloud, PenTool, ArrowLeft } from 'lucide-react';
+import { Check, ArrowRight, Globe, Smartphone, Bot, TrendingUp, Cloud, PenTool, ArrowLeft, Loader2 } from 'lucide-react';
+import { supabase } from '../services/supabaseClient';
 import PageHero from '../components/PageHero';
 
 const ServiceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const service = SERVICES.find(s => s.id === id);
+  const [service, setService] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      const { data } = await supabase.from('tekify_services').select('*').eq('id', id).single();
+      setService(data);
+      setLoading(false);
+    };
+    fetchService();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-primary-600" />
+      </div>
+    );
+  }
 
   if (!service) {
     return <Navigate to="/services" replace />;
   }
 
-  const IconComponent = {
-    "Globe": Globe,
-    "Smartphone": Smartphone,
-    "Bot": Bot,
-    "TrendingUp": TrendingUp,
-    "Cloud": Cloud,
-    "PenTool": PenTool
-  }[service.icon] || Globe;
+  const IconComponent = Globe;
 
   return (
     <div className="min-h-screen pb-32 transition-colors duration-500">
@@ -72,7 +83,7 @@ const ServiceDetail: React.FC = () => {
                   </div>
                   
                   <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 dark:text-slate-400 mb-2">Starting at</h3>
-                  <p className="text-5xl font-black tracking-tighter text-white dark:text-slate-900 mb-12">{service.price}</p>
+                  <p className="text-5xl font-black tracking-tighter text-white dark:text-slate-900 mb-12">₦{Number(service.price).toLocaleString()}</p>
                   
                   <div className="space-y-4">
                     <Link 
