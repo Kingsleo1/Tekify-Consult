@@ -22,7 +22,7 @@ const Booking: React.FC = () => {
   const [bookingMethod, setBookingMethod] = useState<'online' | 'whatsapp'>('online');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [services, setServices] = useState<ServicePlan[]>([]);
-  const [loadingServices, setLoadingServices] = useState(true);
+  // const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({
     service: initialServiceId,
     date: '',
@@ -37,7 +37,7 @@ const Booking: React.FC = () => {
     const fetchServices = async () => {
       const { data } = await supabase.from('tekify_services').select('*').order('name');
       setServices(data || []);
-      setLoadingServices(false);
+      // setLoadingServices(false);
     };
     fetchServices();
   }, []);

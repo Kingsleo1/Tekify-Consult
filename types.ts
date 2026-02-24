@@ -95,6 +95,7 @@ export interface TekifyInvoice {
   issued_at?: string;
   paid_at?: string;
   created_at?: string;
+  additional_note?: string;
   tekify_customers?: TekifyCustomer;
   tekify_invoice_items?: TekifyInvoiceItem[];
 }
@@ -116,5 +117,6 @@ export interface TekifyReceipt {
   payment_method: string;
   amount_paid: number;
   issued_at?: string;
+  additional_note?: string;
   tekify_invoices?: TekifyInvoice;
 }

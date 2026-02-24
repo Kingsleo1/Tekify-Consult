@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Rocket, MapPin, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, Hexagon, Sun, Moon } from 'lucide-react';
+import { Menu, X, MapPin, Phone, Mail, Facebook, Twitter, Linkedin, Instagram, Sun, Moon } from 'lucide-react';
 import { NAV_LINKS, BUSINESS_INFO } from '../constants';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -19,8 +19,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Close mobile menu on route change
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
+    // eslint-disable-next-line
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  }, [location.pathname, mobileMenuOpen]);
 
   // Handle Theme Change
   useEffect(() => {

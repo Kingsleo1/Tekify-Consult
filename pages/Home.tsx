@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, ChevronUp, Users, Clock, Award, Loader2 } from 'lucide-react';
+import { ArrowRight, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, Users, Clock, Award, Loader2 } from 'lucide-react';
 import { PROJECTS, TESTIMONIALS, FAQS, TECH_STACK, WHY_TEKIFY_ITEMS, PROCESS_STEPS } from '../constants';
 import { supabase } from '../services/supabaseClient';
 

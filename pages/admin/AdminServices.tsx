@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Search, 
-  Filter, 
   Plus,
   Edit2,
   Trash2,
@@ -9,8 +7,7 @@ import {
   Tag,
   DollarSign,
   X,
-  Save,
-  CheckCircle2
+  Save
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import { ServicePlan } from '../../types';

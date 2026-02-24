@@ -4,10 +4,8 @@ import {
   Filter, 
   MoreVertical, 
   CheckCircle2, 
-  XCircle, 
   FilePlus,
-  Loader2,
-  ExternalLink
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '../../services/supabaseClient';

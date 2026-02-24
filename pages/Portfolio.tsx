@@ -14,7 +14,7 @@ const Portfolio: React.FC = () => {
 
       <div className="py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16">
-            {PROJECTS.map((project, idx) => (
+            {PROJECTS.map((project) => (
                 <Link to={`/portfolio/${project.id}`} key={project.id} className="group relative rounded-[4rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all duration-700 block">
                     <div className="aspect-[4/3] overflow-hidden relative">
                         <img src={project.image} alt={project.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-[2s] grayscale group-hover:grayscale-0" />

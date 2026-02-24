@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
-import { Check, ArrowRight, Globe, Smartphone, Bot, TrendingUp, Cloud, PenTool, ArrowLeft, Loader2 } from 'lucide-react';
+import { Check, Globe, ArrowLeft, Loader2 } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 import PageHero from '../components/PageHero';
 

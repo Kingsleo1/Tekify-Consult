@@ -6,8 +6,6 @@ import {
   CreditCard, 
   Download,
   Loader2,
-  CheckCircle2,
-  Clock,
   Plus,
   X,
   Trash2,
@@ -34,6 +32,7 @@ const AdminInvoices: React.FC = () => {
   // Form State
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [additionalNote, setAdditionalNote] = useState('');
   const [items, setItems] = useState<any[]>([
     { service_id: '', service_name: '', unit_price: 0, quantity: 1 }
   ]);
@@ -107,6 +106,7 @@ const AdminInvoices: React.FC = () => {
     setEditingInvoiceId(invoice.id);
     setSelectedCustomerId(invoice.customer_id);
     setDueDate(invoice.due_date ? new Date(invoice.due_date).toISOString().split('T')[0] : '');
+    setAdditionalNote(invoice.additional_note || '');
     
     if (invoice.tekify_invoice_items && invoice.tekify_invoice_items.length > 0) {
       setItems(invoice.tekify_invoice_items.map((item: any) => ({
@@ -135,7 +135,8 @@ const AdminInvoices: React.FC = () => {
         body: JSON.stringify({
           customerId: selectedCustomerId,
           items,
-          dueDate
+          dueDate,
+          additionalNote
         })
       });
 
@@ -145,6 +146,7 @@ const AdminInvoices: React.FC = () => {
         setEditingInvoiceId(null);
         setItems([{ service_id: '', service_name: '', unit_price: 0, quantity: 1 }]);
         setSelectedCustomerId('');
+        setAdditionalNote('');
         fetchInvoices();
       } else {
         const err = await response.json();
@@ -171,7 +173,8 @@ const AdminInvoices: React.FC = () => {
         body: JSON.stringify({
           customerId: selectedCustomerId,
           items,
-          dueDate
+          dueDate,
+          additionalNote
         })
       });
 
@@ -180,6 +183,7 @@ const AdminInvoices: React.FC = () => {
         setShowCreateModal(false);
         setItems([{ service_id: '', service_name: '', unit_price: 0, quantity: 1 }]);
         setSelectedCustomerId('');
+        setAdditionalNote('');
         fetchInvoices();
       } else {
         const err = await response.json();
@@ -362,6 +366,16 @@ const AdminInvoices: React.FC = () => {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Additional Note</label>
+                <textarea
+                  value={additionalNote}
+                  onChange={(e) => setAdditionalNote(e.target.value)}
+                  placeholder="Add any additional notes or terms..."
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                />
+              </div>
+
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Invoice Items</label>
@@ -511,6 +525,16 @@ const AdminInvoices: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Additional Note</label>
+                <textarea
+                  value={additionalNote}
+                  onChange={(e) => setAdditionalNote(e.target.value)}
+                  placeholder="Add any additional notes or terms..."
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                />
               </div>
 
               <div className="space-y-6">

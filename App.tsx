@@ -9,7 +9,6 @@ import About from './pages/About';
 import Portfolio from './pages/Portfolio';
 import Blog from './pages/Blog';
 import BlogPostDetail from './pages/BlogPostDetail';
-import PortfolioDetail from './pages/PortfolioDetail';
 import AITools from './pages/AITools';
 import ServiceDetail from './pages/ServiceDetail';
 import WhyTekifyDetail from './pages/WhyTekifyDetail';
@@ -26,8 +25,7 @@ import AdminCustomers from './pages/admin/AdminCustomers';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import { Toaster } from 'sonner';
-import TekiAlly from './components/TekiAlly';
-import WhatsAppButton from './components/WhatsAppButton';
+import ChatWidget from './components/ChatWidget';
 
 const App: React.FC = () => {
   return (
@@ -62,8 +60,7 @@ const App: React.FC = () => {
           </Route>
         </Routes>
       </Layout>
-      <TekiAlly />
-      <WhatsAppButton />
+      <ChatWidget />
       <Toaster position="top-right" richColors />
     </Router>
   );

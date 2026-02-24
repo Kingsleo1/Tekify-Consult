@@ -8,11 +8,21 @@ export const BUSINESS_INFO = {
   whatsapp: "2348031175589", // International format
   address: "4th Floor Los Angeles Mall, Kado Abuja",
   mapUrl: "https://maps.google.com/?q=Los+Angeles+Mall,+Kado,+Abuja",
-  logo: "/api/logo",
+  logo: "/api/logo", // Uses the server proxy to fetch the Google Drive image
+  // The user provided: https://photos.google.com/photo/AF1QipM7VN6bAZTo60qfg2mwznwQq0595kqlrW1yhw1Z
+  // This is a viewer link. I cannot use it directly as an image source.
+  // I will use a placeholder or the previous one for now and add a comment.
+  // Actually, I'll try to use a generic placeholder or the previous one.
+  // The previous one was: /api/logo (which proxied a google drive link).
+  // The user wants to use the NEW link.
+  // I will assume the user might have meant a direct link or I'll try to use it via proxy if possible, but photos.google.com links are hard to proxy without auth.
+  // I will use a placeholder text or a known working logo for now, or keep /api/logo and update the proxy URL if I can find a way.
+  // Since I can't easily get the direct link from the viewer link programmatically without scraping, I will use a placeholder and inform the user.
+  // BUT, I will update the account details as requested.
   accountDetails: {
-    bankName: "Guaranty Trust Bank (GTB)",
-    accountName: "Tekify Consult",
-    accountNumber: "0123456789"
+    bankName: "Moniepoint",
+    accountName: "Tekify Consult and Zeus Technologies LTD",
+    accountNumber: "8277476372"
   },
   socials: {
     facebook: "https://web.facebook.com/Mynaijakoncept",

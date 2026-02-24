@@ -5,12 +5,10 @@ import {
   MoreVertical, 
   Download,
   Loader2,
-  Receipt as ReceiptIcon,
   Plus,
   X,
   FileText,
-  CreditCard,
-  User
+  CreditCard
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import { TekifyReceipt, TekifyInvoice } from '../../types';
@@ -30,6 +28,7 @@ const AdminReceipts: React.FC = () => {
   const [selectedInvoiceId, setSelectedInvoiceId] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
   const [amountPaid, setAmountPaid] = useState<number>(0);
+  const [additionalNote, setAdditionalNote] = useState('');
 
   const fetchReceipts = async () => {
     setLoading(true);
@@ -76,6 +75,7 @@ const AdminReceipts: React.FC = () => {
     setEditingReceiptId(receipt.id);
     setPaymentMethod(receipt.payment_method);
     setAmountPaid(Number(receipt.amount_paid));
+    setAdditionalNote(receipt.additional_note || '');
     setShowEditModal(true);
   };
 
@@ -90,7 +90,8 @@ const AdminReceipts: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paymentMethod,
-          amountPaid
+          amountPaid,
+          additionalNote
         })
       });
 
@@ -100,6 +101,7 @@ const AdminReceipts: React.FC = () => {
         setEditingReceiptId(null);
         setPaymentMethod('Bank Transfer');
         setAmountPaid(0);
+        setAdditionalNote('');
         fetchReceipts();
       } else {
         const err = await response.json();
@@ -126,7 +128,8 @@ const AdminReceipts: React.FC = () => {
         body: JSON.stringify({
           invoiceId: selectedInvoiceId,
           paymentMethod,
-          amountPaid
+          amountPaid,
+          additionalNote
         })
       });
 
@@ -135,6 +138,7 @@ const AdminReceipts: React.FC = () => {
         setShowCreateModal(false);
         setSelectedInvoiceId('');
         setAmountPaid(0);
+        setAdditionalNote('');
         fetchReceipts();
         fetchPendingInvoices();
       } else {
@@ -308,6 +312,16 @@ const AdminReceipts: React.FC = () => {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Additional Note</label>
+                <textarea
+                  value={additionalNote}
+                  onChange={(e) => setAdditionalNote(e.target.value)}
+                  placeholder="Add any additional notes or terms..."
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                />
+              </div>
+
               <div className="flex gap-4 pt-4">
                 <button 
                   type="button" 
@@ -368,6 +382,16 @@ const AdminReceipts: React.FC = () => {
                     className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Additional Note</label>
+                <textarea
+                  value={additionalNote}
+                  onChange={(e) => setAdditionalNote(e.target.value)}
+                  placeholder="Add any additional notes or terms..."
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                />
               </div>
 
               <div className="flex gap-4 pt-4">

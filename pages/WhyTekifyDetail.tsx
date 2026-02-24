@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { WHY_TEKIFY_ITEMS } from '../constants';
-import { Users, Clock, Shield, Award, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Users, Clock, Shield, Award, ArrowLeft } from 'lucide-react';
 import PageHero from '../components/PageHero';
 
 const WhyTekifyDetail: React.FC = () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { PROCESS_STEPS } from '../constants';
-import { Play, ArrowLeft, Package } from 'lucide-react';
+import { ArrowLeft, Package } from 'lucide-react';
 import PageHero from '../components/PageHero';
 
 const ProcessDetail: React.FC = () => {

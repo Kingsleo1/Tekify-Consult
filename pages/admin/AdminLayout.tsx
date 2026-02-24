@@ -86,11 +86,11 @@ const AdminLayout: React.FC = () => {
 
       {/* Sidebar */}
       <aside className={`
-        bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col fixed h-full z-50 shadow-2xl transition-all duration-300
+        bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col fixed h-screen z-50 shadow-2xl transition-all duration-300
         ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}
         ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
       `}>
-        <div className={`p-8 border-b border-slate-100 dark:border-white/5 flex items-center ${desktopCollapsed ? 'justify-center px-4' : 'justify-between'}`}>
+        <div className={`p-8 border-b border-slate-100 dark:border-white/5 flex items-center ${desktopCollapsed ? 'justify-center px-4' : 'justify-between'} flex-shrink-0`}>
           {!desktopCollapsed && (
             <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic whitespace-nowrap overflow-hidden">
               Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Admin</span>
@@ -125,9 +125,19 @@ const AdminLayout: React.FC = () => {
           <AdminNavLink to="/admin/receipts" icon={<Receipt className="w-5 h-5 min-w-[20px]" />} label="Receipts" collapsed={desktopCollapsed} onClick={() => setSidebarOpen(false)} />
           <AdminNavLink to="/admin/services" icon={<Package className="w-5 h-5 min-w-[20px]" />} label="Services" collapsed={desktopCollapsed} onClick={() => setSidebarOpen(false)} />
           <AdminNavLink to="/admin/emails" icon={<Mail className="w-5 h-5 min-w-[20px]" />} label="Email Logs" collapsed={desktopCollapsed} onClick={() => setSidebarOpen(false)} />
+          
+          <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/5 lg:hidden">
+             <button 
+              onClick={handleSignOut}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all"
+            >
+              <LogOut className="w-5 h-5 min-w-[20px]" />
+              <span>Sign Out</span>
+            </button>
+          </div>
         </nav>
 
-        <div className="p-4 border-t border-slate-100 dark:border-white/5">
+        <div className="p-4 border-t border-slate-100 dark:border-white/5 flex-shrink-0 hidden lg:block">
           <button 
             onClick={handleSignOut}
             className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all ${desktopCollapsed ? 'justify-center' : ''}`}

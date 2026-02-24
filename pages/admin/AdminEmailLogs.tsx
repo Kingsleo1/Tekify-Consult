@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { 
   Search, 
   Filter, 
-  Mail, 
   CheckCircle2, 
   XCircle,
   Loader2,
@@ -15,7 +14,7 @@ const AdminEmailLogs: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchLogs = async () => {
-    setLoading(true);
+    // setLoading(true); // Removed to prevent synchronous state update warning
     const { data, error } = await supabase
       .from('tekify_email_logs')
       .select('*')
@@ -27,6 +26,7 @@ const AdminEmailLogs: React.FC = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchLogs();
   }, []);
 

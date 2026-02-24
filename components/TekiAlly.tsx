@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, Send, X, Minimize2, Sparkles, User, Download, Trash2 } from 'lucide-react';
+import { Bot, Send, X, Sparkles, User, Download, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sendMessageToTeki } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
-const TekiAlly: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface TekiAllyProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const TekiAlly: React.FC<TekiAllyProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'model', text: "Hello! I'm Teki Ally, your AI consultant. How can I help grow your business today?" }
   ]);
@@ -23,11 +27,12 @@ const TekiAlly: React.FC = () => {
     scrollToBottom();
   }, [messages, isOpen]);
 
-  // Click outside to close
+  // Click outside to close - Handled by parent or here if needed, but parent handles menu.
+  // We can keep click outside if we want it to close when clicking outside the chat window.
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (chatRef.current && !chatRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        onClose();
       }
     };
 
@@ -40,7 +45,7 @@ const TekiAlly: React.FC = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -68,7 +73,7 @@ const TekiAlly: React.FC = () => {
           return newHistory;
         });
       }
-    } catch (error) {
+    } catch {
       setMessages(prev => [...prev, { role: 'model', text: "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again or contact our support.", isError: true }]);
     } finally {
       setIsLoading(false);
@@ -100,24 +105,10 @@ const TekiAlly: React.FC = () => {
 
   return (
     <>
-      {/* Toggle Button - Modern Floating */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-16 h-16 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.5rem] shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group animate-float"
-        >
-          <Bot className="w-8 h-8 group-hover:rotate-12 transition-transform duration-500" />
-          <span className="absolute -top-2 -right-2 flex h-5 w-5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-500 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-5 w-5 bg-primary-500 border-4 border-white dark:border-slate-900"></span>
-          </span>
-        </button>
-      )}
-
       {/* Chat Window - Immersive Glass */}
       <div 
         ref={chatRef}
-        className={`fixed bottom-8 right-8 z-50 w-[calc(100vw-4rem)] md:w-[600px] flex flex-col transition-all duration-500 transform origin-bottom-right ${isOpen ? 'scale-100 opacity-100 h-[min(950px,calc(100vh-4rem))]' : 'scale-90 opacity-0 h-0 pointer-events-none'}`}
+        className={`fixed bottom-24 right-8 z-50 w-[calc(100vw-4rem)] md:w-[600px] flex flex-col transition-all duration-500 transform origin-bottom-right ${isOpen ? 'scale-100 opacity-100 h-[min(950px,calc(100vh-8rem))]' : 'scale-90 opacity-0 h-0 pointer-events-none'}`}
       >
         <div className="flex-1 flex flex-col bg-white dark:bg-slate-950 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] border border-slate-200 dark:border-white/10 overflow-hidden relative">
             
@@ -150,7 +141,7 @@ const TekiAlly: React.FC = () => {
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-all">
+                <button onClick={onClose} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-all">
                   <X className="w-5 h-5" />
                 </button>
               </div>

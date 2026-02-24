@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Bot, Image as ImageIcon, Video, Mic, MapPin, Zap, Brain, 
-  Sparkles, Send, Upload, Play, Loader2, Music, Volume2, 
+  Bot, Image as ImageIcon, Mic, MapPin, Zap, Brain, 
+  Sparkles, Send, Upload, Loader2, Volume2, 
   Languages, FileAudio, ExternalLink, Download 
 } from 'lucide-react';
 import PageHero from '../components/PageHero';
@@ -101,7 +101,7 @@ const ChatTool: React.FC = () => {
              navigator.geolocation.getCurrentPosition(resolve, reject);
            });
            location = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-         } catch (e) {
+         } catch {
            console.warn("Location access denied, using defaults");
            location = { latitude: 9.0765, longitude: 7.3986 }; // Abuja
          }
@@ -118,7 +118,7 @@ const ChatTool: React.FC = () => {
         text: result.text || "No response generated.",
         metadata: result.groundingMetadata
       }]);
-    } catch (error) {
+    } catch {
       setMessages(prev => [...prev, { role: 'model', text: "Error: Could not generate response." }]);
     } finally {
       setIsLoading(false);

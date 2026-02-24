@@ -273,8 +273,12 @@ async function startServer() {
 
   // --- MANUAL INVOICE CREATION ---
   app.post("/api/admin/invoices", async (req, res) => {
-    const { customerId, items, dueDate } = req.body;
+    const { customerId, items, dueDate, additionalNote } = req.body;
     const VAT_RATE = 0.075;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Items array is required and must not be empty" });
+    }
 
     try {
       const invoiceNumber = `INV-${Date.now()}`;
@@ -290,7 +294,8 @@ async function startServer() {
           total_amount: totalAmount,
           tax_amount: taxAmount,
           status: 'unpaid',
-          due_date: dueDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+          due_date: dueDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          additional_note: additionalNote
         }])
         .select()
         .single();
@@ -315,15 +320,27 @@ async function startServer() {
       res.json(invoice);
     } catch (error: any) {
       console.error("Manual Invoice Error:", error);
-      res.status(500).json({ error: error.message });
+      
+      // Check for Postgres not-null constraint violation on service_id
+      if (error.code === '23502' && error.column === 'service_id') {
+        return res.status(500).json({ 
+          error: "Database Schema Error: Custom items require the 'service_id' column to be nullable. Please run the provided SQL command to fix this." 
+        });
+      }
+
+      res.status(500).json({ error: error.message || "An unexpected error occurred" });
     }
   });
 
   // --- UPDATE INVOICE ---
   app.put("/api/admin/invoices/:id", async (req, res) => {
     const invoiceId = req.params.id;
-    const { customerId, items, dueDate } = req.body;
+    const { customerId, items, dueDate, additionalNote } = req.body;
     const VAT_RATE = 0.075;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Items array is required and must not be empty" });
+    }
 
     try {
       const subtotal = items.reduce((acc: number, item: any) => acc + (item.unit_price * item.quantity), 0);
@@ -337,7 +354,8 @@ async function startServer() {
           customer_id: customerId,
           total_amount: totalAmount,
           tax_amount: taxAmount,
-          due_date: dueDate
+          due_date: dueDate,
+          additional_note: additionalNote
         })
         .eq("id", invoiceId)
         .select()
@@ -372,13 +390,21 @@ async function startServer() {
       res.json(invoice);
     } catch (error: any) {
       console.error("Update Invoice Error:", error);
-      res.status(500).json({ error: error.message });
+      
+      // Check for Postgres not-null constraint violation on service_id
+      if (error.code === '23502' && error.column === 'service_id') {
+        return res.status(500).json({ 
+          error: "Database Schema Error: Custom items require the 'service_id' column to be nullable. Please run the provided SQL command to fix this." 
+        });
+      }
+
+      res.status(500).json({ error: error.message || "An unexpected error occurred" });
     }
   });
 
   // --- MANUAL RECEIPT CREATION ---
   app.post("/api/admin/receipts", async (req, res) => {
-    const { invoiceId, paymentMethod, amountPaid } = req.body;
+    const { invoiceId, paymentMethod, amountPaid, additionalNote } = req.body;
 
     try {
       const receiptNumber = `RCP-${Date.now()}`;
@@ -388,7 +414,8 @@ async function startServer() {
           receipt_number: receiptNumber,
           invoice_id: invoiceId,
           payment_method: paymentMethod,
-          amount_paid: amountPaid
+          amount_paid: amountPaid,
+          additional_note: additionalNote
         }])
         .select()
         .single();
@@ -430,6 +457,7 @@ async function startServer() {
               <p>Hello ${fullInvoice.tekify_customers.full_name},</p>
               <p>We have received your payment of ₦${Number(amountPaid).toLocaleString()} for Invoice ${fullInvoice.invoice_number}.</p>
               <p>Receipt Number: ${receiptNumber}</p>
+              ${additionalNote ? `<p><strong>Note:</strong> ${additionalNote}</p>` : ''}
               <br/>
               <p>Thank you for your business!<br/>Tekify Consult</p>
             `,
@@ -444,21 +472,22 @@ async function startServer() {
       res.json(receipt);
     } catch (error: any) {
       console.error("Manual Receipt Error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message || "An unexpected error occurred" });
     }
   });
 
   // --- UPDATE RECEIPT ---
   app.put("/api/admin/receipts/:id", async (req, res) => {
     const receiptId = req.params.id;
-    const { paymentMethod, amountPaid } = req.body;
+    const { paymentMethod, amountPaid, additionalNote } = req.body;
 
     try {
       const { data: receipt, error: recError } = await getSupabase()
         .from("tekify_receipts")
         .update({
           payment_method: paymentMethod,
-          amount_paid: amountPaid
+          amount_paid: amountPaid,
+          additional_note: additionalNote
         })
         .eq("id", receiptId)
         .select()
@@ -469,7 +498,7 @@ async function startServer() {
       res.json(receipt);
     } catch (error: any) {
       console.error("Update Receipt Error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message || "An unexpected error occurred" });
     }
   });
 
@@ -483,6 +512,7 @@ async function startServer() {
       res.set("Cache-Control", "public, max-age=86400");
       res.send(Buffer.from(buffer));
     } catch (error) {
+      console.error("Logo proxy error:", error);
       res.status(500).send("Error fetching logo");
     }
   });
