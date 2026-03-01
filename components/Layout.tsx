@@ -19,9 +19,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Close mobile menu on route change
   useEffect(() => {
-    // eslint-disable-next-line
-    if (mobileMenuOpen) setMobileMenuOpen(false);
-  }, [location.pathname, mobileMenuOpen]);
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   // Handle Theme Change
   useEffect(() => {
@@ -47,11 +49,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </div>
 
       {/* Navigation - Floating Premium Rail */}
-      <nav className="sticky top-0 z-50 w-full px-4 py-4 sm:px-6 lg:px-8">
+      <nav className="sticky top-0 z-50 w-full px-2 sm:px-6 lg:px-8 py-2 sm:py-4">
         <div className="max-w-7xl mx-auto">
-          <div className="glass-panel rounded-2xl border border-slate-200/50 dark:border-white/10 shadow-2xl backdrop-blur-2xl px-6 h-20 flex justify-between items-center transition-all duration-500">
+          <div className="glass-panel rounded-xl sm:rounded-2xl border border-slate-200/50 dark:border-white/10 shadow-2xl backdrop-blur-2xl px-4 sm:px-6 h-16 sm:h-20 flex justify-between items-center transition-all duration-500">
             {/* Logo */}
-            <NavLink to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group">
+            <NavLink to="/" className="flex-shrink-0 flex items-center gap-2 sm:gap-3 cursor-pointer group">
               <div className="relative">
                 {!logoError && (
                   <img 
@@ -59,13 +61,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     alt={`${BUSINESS_INFO.name} Logo`}
                     onError={() => setLogoError(true)}
                     referrerPolicy="no-referrer"
-                    className="h-12 w-auto object-contain transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
+                    className="h-8 sm:h-12 w-auto object-contain transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
                   />
                 )}
                 <div className="absolute -inset-1 bg-primary-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
+              <div className="hidden xs:block">
+                <h1 className="text-base sm:text-xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
                   Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
                 </h1>
               </div>
@@ -113,18 +115,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="lg:hidden flex items-center gap-4">
+            <div className="lg:hidden flex items-center gap-2 sm:gap-4">
               <button 
                 onClick={toggleTheme}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-white/5"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-white/5"
               >
-                {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg active:scale-90 transition-all duration-300"
+                className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg active:scale-90 transition-all duration-300"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
               </button>
             </div>
           </div>
@@ -196,12 +198,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </main>
 
       {/* Footer - Modern Split Layout */}
-      <footer className="relative bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-white/5 pt-24 pb-12 transition-colors duration-500">
+      <footer className="relative bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-white/5 pt-16 sm:pt-24 pb-12 transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 lg:gap-12">
             
             {/* Brand Info */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <div className="flex items-center gap-3">
                 {!logoError && (
                   <img 
@@ -209,17 +211,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     alt={`${BUSINESS_INFO.name} Logo`}
                     onError={() => setLogoError(true)}
                     referrerPolicy="no-referrer"
-                    className="h-12 w-auto object-contain"
+                    className="h-10 sm:h-12 w-auto object-contain"
                   />
                 )}
-                <h2 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
                   Tekify <span className="text-primary-600 dark:text-primary-400 not-italic">Consult</span>
                 </h2>
               </div>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-medium">
                 We engineer digital excellence. From AI-driven automation to enterprise cloud systems, we transform your vision into high-performance reality.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex space-x-3 sm:space-x-4">
                 {[
                   { Icon: Facebook, url: BUSINESS_INFO.socials.facebook },
                   { Icon: Twitter, url: BUSINESS_INFO.socials.twitter },
@@ -231,9 +233,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     href={url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary-600 hover:text-white transition-all duration-500 hover:-translate-y-2 shadow-sm"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary-600 hover:text-white transition-all duration-500 hover:-translate-y-2 shadow-sm"
                   >
-                    <Icon className="w-5 h-5"/>
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5"/>
                   </a>
                 ))}
               </div>
@@ -258,7 +260,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div>
               <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary-600 dark:text-primary-400 mb-8">Expertise</h3>
               <ul className="space-y-4">
-                {['Web Engineering', 'Mobile Ecosystems', 'Cloud Architecture', 'AI Integration', 'Digital Strategy'].map((item, i) => (
+                {['Web Engineering', 'Mobile Ecosystems', 'Cloud Architecture', 'AI Integration', 'Business Strategy'].map((item, i) => (
                   <li key={i}>
                     <Link to="/services" className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-white transition-all duration-300 flex items-center gap-3 group">
                       <span className="w-2 h-[2px] bg-slate-300 dark:bg-slate-700 group-hover:w-4 group-hover:bg-primary-500 transition-all duration-300"></span>
@@ -271,19 +273,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             {/* Contact */}
             <div>
-              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary-600 dark:text-primary-400 mb-8">Connect</h3>
-              <ul className="space-y-6">
-                <li className="flex items-start gap-4 group">
-                  <div className="p-3 bg-slate-100 dark:bg-white/5 rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
-                    <MapPin className="w-5 h-5" />
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary-600 dark:text-primary-400 mb-6 sm:mb-8">Connect</h3>
+              <ul className="space-y-4 sm:space-y-6">
+                <li className="flex items-start gap-3 sm:gap-4 group">
+                  <div className="p-2.5 sm:p-3 bg-slate-100 dark:bg-white/5 rounded-xl sm:rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
+                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                     {BUSINESS_INFO.address}
                   </div>
                 </li>
-                <li className="flex items-center gap-4 group">
-                   <div className="p-3 bg-slate-100 dark:bg-white/5 rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
-                    <Phone className="w-5 h-5" />
+                <li className="flex items-center gap-3 sm:gap-4 group">
+                   <div className="p-2.5 sm:p-3 bg-slate-100 dark:bg-white/5 rounded-xl sm:rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                     {BUSINESS_INFO.phone.split(',').map((p, i) => (
@@ -291,9 +293,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     ))}
                   </div>
                 </li>
-                <li className="flex items-center gap-4 group">
-                   <div className="p-3 bg-slate-100 dark:bg-white/5 rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
-                    <Mail className="w-5 h-5" />
+                <li className="flex items-center gap-3 sm:gap-4 group">
+                   <div className="p-2.5 sm:p-3 bg-slate-100 dark:bg-white/5 rounded-xl sm:rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
+                    <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                     {BUSINESS_INFO.email}
@@ -309,8 +311,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </p>
             <div className="flex items-center gap-8">
               <Link to="/admin" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Admin Portal</Link>
-              <Link to="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Privacy Policy</Link>
-              <Link to="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 hover:text-primary-500 transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>

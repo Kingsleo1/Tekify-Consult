@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Services from './pages/Services';
 import Booking from './pages/Booking';
 import Contact from './pages/Contact';
+import Team from './pages/Team';
 import About from './pages/About';
 import Portfolio from './pages/Portfolio';
 import Blog from './pages/Blog';
@@ -38,6 +39,7 @@ const App: React.FC = () => {
           <Route path="/why-tekify/:id" element={<WhyTekifyDetail />} />
           <Route path="/process/:id" element={<ProcessDetail />} />
           <Route path="/ai-tools" element={<AITools />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/about" element={<About />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/blog" element={<Blog />} />

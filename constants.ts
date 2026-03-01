@@ -1,4 +1,4 @@
-import { Service, FaqItem, TechStackItem, EngagementModel, WhyTekifyItem, ProcessStep } from './types';
+import { Service, FaqItem, TechStackItem, EngagementModel, WhyTekifyItem, ProcessStep, TeamMember } from './types';
 
 export const BUSINESS_INFO = {
   name: "Tekify Consult",
@@ -36,10 +36,12 @@ export const NAV_LINKS = [
   { label: 'Home', path: '/' },
   { label: 'Services', path: '/services' },
   { label: 'AI Tools', path: '/ai-tools' },
+  { label: 'Team', path: '/team' },
   { label: 'About', path: '/about' },
   { label: 'Portfolio', path: '/portfolio' },
   { label: 'Blog', path: '/blog' },
   { label: 'Contact', path: '/contact' },
+  { label: 'Terms', path: '/terms' },
 ];
 
 export const SERVICES: Service[] = [
@@ -96,6 +98,15 @@ export const SERVICES: Service[] = [
     price: "From ₦100,000",
     icon: "PenTool",
     features: ["Logo Design", "Brand Guidelines", "Marketing Materials", "UI/UX Prototyping", "Animation & Motion", "Print Design"]
+  },
+  {
+    id: 'business-consultation',
+    title: "Business Strategy & Consultation",
+    description: "Tailored strategic advice to scale your business and optimize operations.",
+    longDescription: "Our business consultation services are designed for entrepreneurs and established enterprises looking to navigate the complexities of the digital economy. We provide deep-dive strategic audits, operational optimization plans, and market entry strategies. Our consultants work closely with your leadership team to identify growth bottlenecks and implement scalable solutions. Whether you are looking to pivot your business model, optimize your supply chain, or prepare for a funding round, we provide the data-backed insights you need to succeed.",
+    price: "From ₦100,000",
+    icon: "Briefcase",
+    features: ["Market Analysis", "Operational Audits", "Growth Strategy", "Financial Modeling", "Digital Transformation Roadmap", "Executive Coaching"]
   }
 ];
 
@@ -264,24 +275,27 @@ The migration to AWS has significantly improved the company's IT operations, res
   }
 ];
 
-export const TEAM = [
+export const TEAM: TeamMember[] = [
+  {
+    name: "Kingsley Agu",
+    role: "Founder & CEO",
+    image: "https://photos.google.com/photo/AF1QipMnkFw-2mKBJMzcHceqvDH-o40XQJPn418T1tYP",
+    bio: "Visionary leader driving digital transformation and AI integration for businesses globally. With a passion for innovation, Kingsley leads Tekify Consult with a focus on excellence and client success.",
+    linkedin: "https://www.linkedin.com/search/results/all/?fetchDeterministicClustersOnly=true&heroEntityKey=urn%3Ali%3Aorganization%3A103209812&keywords=tekify%20consult&origin=RICH_QUERY_TYPEAHEAD_HISTORY&position=0&sid=8sg",
+    whatsapp: "https://wa.me/+2348031175589"
+  },
+  {
+    name: "Joy Kingsley",
+    role: "Associate Partner",
+    image: "https://photos.google.com/photo/AF1QipO5XY1fDGJkLmvn-sCEIC-pNZ8BjCwzZR9HpmqO",
+    bio: "Strategic partner dedicated to operational excellence and client relationship management. Joy ensures that every project at Tekify Consult meets the highest standards of quality and efficiency.",
+    whatsapp: "https://wa.me/+2347040586869"
+  },
   {
     name: "Emmanuel N.",
     role: "Lead Engineer",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
     bio: "Ex-Google architect with 10+ years in scalable systems."
-  },
-  {
-    name: "Sarah J.",
-    role: "Product Designer",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
-    bio: "Award-winning UX/UI designer focused on human-centered design."
-  },
-  {
-    name: "David O.",
-    role: "AI Specialist",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
-    bio: "PhD in Machine Learning with expertise in NLP and Computer Vision."
   }
 ];
 
@@ -391,7 +405,11 @@ By incorporating these trends into your design strategy, you can create user exp
 export const FAQS: FaqItem[] = [
   {
     question: "What is your typical project timeline?",
-    answer: "Timelines vary by project scope. A standard website typically takes 2-4 weeks, while complex mobile apps or custom software may take 8-12 weeks. We provide a detailed Gantt chart during the discovery phase."
+    answer: "Timelines vary by project scope. A standard website typically takes 2-4 weeks, while complex mobile apps or custom software may take 8-12 weeks. Consultation projects can range from a single strategy session to a multi-month engagement."
+  },
+  {
+    question: "How does the business consultation process work?",
+    answer: "Our consultation begins with a deep-dive discovery session where we analyze your current business state. We then provide a comprehensive report with actionable strategies, followed by implementation support to ensure you reach your goals."
   },
   {
     question: "Do you provide post-launch support?",
@@ -437,5 +455,11 @@ export const ENGAGEMENT_MODELS: EngagementModel[] = [
     description: "Your own full-time remote engineering team managed by us.",
     idealFor: "Long-term development, Enterprise maintenance",
     features: ["Full control", "Direct communication", "Seamless integration", "Long-term partnership"]
+  },
+  {
+    title: "Consultation Retainer",
+    description: "Ongoing strategic advice and operational support on a monthly basis.",
+    idealFor: "Startups, Growing SMEs, Executive leadership",
+    features: ["Weekly strategy calls", "Priority support", "Performance audits", "Market insights"]
   }
 ];

@@ -1,9 +1,19 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import nodemailer from "nodemailer";
 import { createClient } from "@supabase/supabase-js";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import { TEKIFY_SERVICES } from "./services/pricingService";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+console.log("--- SERVER INITIALIZING ---");
+console.log("Time:", new Date().toISOString());
+console.log("Platform:", process.platform);
+console.log("Node Version:", process.version);
 
 // Initialize Supabase lazily
 let supabase: any = null;
@@ -30,12 +40,31 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
 async function startServer() {
+  console.log("Starting server process...");
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || "3000", 10);
+  console.log(`Configured to listen on port: ${PORT}`);
 
   app.use(cors());
   app.use(express.json());
+
+  // Request logging
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+  });
 
   // --- API ROUTES ---
 
@@ -55,23 +84,48 @@ async function startServer() {
 
     try {
       // 1. Find or Create Customer
-      const { data: existingCustomer } = await getSupabase()
+      const { data: existingCustomer, error: findError } = await getSupabase()
         .from("tekify_customers")
         .select("id")
         .eq("email", customer.email)
-        .single();
+        .maybeSingle();
+
+      if (findError && findError.code !== 'PGRST116') {
+        console.error("Find Customer Error:", findError);
+      }
 
       let customerId;
       if (existingCustomer) {
         customerId = existingCustomer.id;
       } else {
+        // Ensure we don't pass an ID to insert, letting Supabase generate it
+        const customerToInsert = { ...customer };
+        delete (customerToInsert as any).id;
         const { data: newCustomer, error: custError } = await getSupabase()
           .from("tekify_customers")
-          .insert([customer])
+          .insert([customerToInsert])
           .select()
           .single();
-        if (custError) throw custError;
-        customerId = newCustomer.id;
+        
+        if (custError) {
+          // If it failed because it was created in the meantime (race condition)
+          if (custError.code === '23505') {
+            const { data: retryCustomer } = await getSupabase()
+              .from("tekify_customers")
+              .select("id")
+              .eq("email", customer.email)
+              .single();
+            if (retryCustomer) {
+              customerId = retryCustomer.id;
+            } else {
+              throw custError;
+            }
+          } else {
+            throw custError;
+          }
+        } else {
+          customerId = newCustomer.id;
+        }
       }
 
       // 2. Create Booking
@@ -504,36 +558,85 @@ async function startServer() {
 
   // --- LOGO PROXY ---
   app.get("/api/logo", async (req, res) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
     try {
-      const response = await fetch("https://lh3.googleusercontent.com/d/19jz5FTeD_4ULC8yqiW8vtsN9Oox4CAKW");
-      if (!response.ok) throw new Error("Failed to fetch logo");
+      const response = await fetch("https://lh3.googleusercontent.com/d/19jz5FTeD_4ULC8yqiW8vtsN9Oox4CAKW", {
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) throw new Error(`Failed to fetch logo: ${response.statusText}`);
+      
       const buffer = await response.arrayBuffer();
       res.set("Content-Type", response.headers.get("content-type") || "image/jpeg");
       res.set("Cache-Control", "public, max-age=86400");
       res.send(Buffer.from(buffer));
-    } catch (error) {
-      console.error("Logo proxy error:", error);
-      res.status(500).send("Error fetching logo");
+    } catch (error: any) {
+      clearTimeout(timeout);
+      console.error("Logo proxy error:", error.message);
+      // Fallback to a placeholder if the logo fails
+      res.redirect("https://picsum.photos/seed/tekify/200/200");
     }
   });
 
   // --- VITE MIDDLEWARE ---
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
+  const isProd = process.env.NODE_ENV === "production" || process.env.K_SERVICE !== undefined;
+  
+  if (!isProd) {
+    console.log("Running in DEVELOPMENT mode with Vite middleware");
+    try {
+      const { createServer: createViteServer } = await import("vite");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } catch (err: any) {
+      console.error("Failed to load Vite middleware, falling back to static", err.message);
+      const distPath = path.join(__dirname, "dist");
+      if (fs.existsSync(distPath)) {
+        app.use(express.static(distPath));
+        app.get("*splat", (req, res) => {
+          res.sendFile(path.join(distPath, "index.html"));
+        });
+      } else {
+        app.get("*", (req, res) => {
+          res.status(500).send("Server is in development mode but Vite failed to load and no production build (dist/) was found. Please run 'npm run build' or check server logs.");
+        });
+      }
+    }
   } else {
-    app.use(express.static("dist"));
-    app.get("*", (req, res) => {
-      res.sendFile("dist/index.html", { root: "." });
-    });
+    console.log("Running in PRODUCTION mode serving static files from /dist");
+    // dist is in the root, server.js is in dist-server/
+    const distPath = path.join(__dirname, "..", "dist");
+    console.log("Static files path:", distPath);
+    
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get("*splat", (req, res) => {
+        const indexPath = path.join(distPath, "index.html");
+        if (fs.existsSync(indexPath)) {
+          res.sendFile(indexPath);
+        } else {
+          res.status(404).send("Production build found (dist/) but index.html is missing. Please check your build process.");
+        }
+      });
+    } else {
+      app.get("*", (req, res) => {
+        res.status(500).send(`Production build directory not found at: ${distPath}. Please run 'npm run build' before starting the server in production mode.`);
+      });
+    }
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`SUCCESS: Server is listening on 0.0.0.0:${PORT}`);
+    console.log(`Health check available at http://0.0.0.0:${PORT}/api/health`);
   });
 }
 
-startServer();
+startServer().catch(err => {
+  console.error("FATAL: Failed to start server:", err);
+  process.exit(1);
+});

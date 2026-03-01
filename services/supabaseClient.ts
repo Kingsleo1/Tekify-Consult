@@ -7,14 +7,17 @@ export const getSupabase = (): SupabaseClient => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn("Supabase environment variables are missing. Some features may not work.");
-      // Return a dummy client or handle it gracefully in components
-      // For now, we'll still try to create it but it might fail if URL is empty
-      // Better to throw a clear error when used, or return a proxy
+    if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {
+      console.warn("Supabase environment variables are missing or invalid. Some features may not work.");
+    } else {
+      console.log("Supabase client initialized with URL:", supabaseUrl.substring(0, 20) + "...");
     }
     
-    supabaseInstance = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseAnonKey || 'placeholder');
+    // Ensure URL is valid for createClient
+    const validUrl = (supabaseUrl && supabaseUrl.startsWith('http')) ? supabaseUrl : 'https://placeholder.supabase.co';
+    const validKey = supabaseAnonKey || 'placeholder';
+
+    supabaseInstance = createClient(validUrl, validKey);
   }
   return supabaseInstance;
 };

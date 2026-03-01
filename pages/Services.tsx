@@ -140,6 +140,47 @@ const Services: React.FC = () => {
             </div>
         </div>
 
+        {/* Consultation Process - Recipe 9 Influence */}
+        <div className="mb-48">
+            <div className="flex flex-col lg:flex-row gap-24 items-center">
+                <div className="lg:w-1/2">
+                    <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary-600 dark:text-primary-400 mb-8">Consultation Method</h2>
+                    <h3 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] mb-10">Strategic <br />Evolution</h3>
+                    <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium">
+                        Our consultation process is designed to uncover hidden opportunities and mitigate risks before they impact your bottom line.
+                    </p>
+                    <div className="space-y-12">
+                        {[
+                            { step: "01", title: "Business Audit", desc: "We analyze your current operations, tech stack, and market position." },
+                            { step: "02", title: "Strategy Design", desc: "We craft a bespoke roadmap for growth and digital transformation." },
+                            { step: "03", title: "Execution Support", desc: "We provide ongoing guidance as you implement the new strategy." }
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-8 group">
+                                <div className="text-6xl font-black text-slate-200 dark:text-slate-100 group-hover:text-primary-600 transition-colors duration-500 leading-none">{item.step}</div>
+                                <div>
+                                    <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{item.title}</h4>
+                                    <p className="text-slate-600 dark:text-slate-400 font-medium">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="lg:w-1/2 relative">
+                    <div className="rounded-[4rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-white/10 aspect-[4/5]">
+                        <img 
+                            src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2670&auto=format&fit=crop" 
+                            alt="Strategy session" 
+                            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                        />
+                    </div>
+                    <div className="absolute -bottom-10 -left-10 p-10 rounded-[3rem] bg-slate-900 text-white shadow-2xl border border-white/10">
+                        <p className="text-5xl font-black tracking-tighter mb-2">100%</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary-400">Data Driven</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {/* Tech Stack Detail - Technical Grid Style */}
         <div className="bg-slate-900 dark:bg-white rounded-[4rem] p-12 md:p-24 transition-colors duration-500 shadow-2xl">
             <div className="max-w-5xl mx-auto">

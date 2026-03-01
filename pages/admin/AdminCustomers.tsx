@@ -49,6 +49,17 @@ const AdminCustomers: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Check if email already exists
+      const { data: existing } = await supabase
+        .from('tekify_customers')
+        .select('id')
+        .eq('email', newCustomer.email)
+        .maybeSingle();
+
+      if (existing) {
+        throw new Error('A customer with this email already exists.');
+      }
+
       const { error } = await supabase
         .from('tekify_customers')
         .insert([newCustomer]);

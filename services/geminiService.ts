@@ -1,9 +1,8 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Modality } from "@google/genai";
 import { BUSINESS_INFO, SERVICES } from '../constants';
 
-// Initialize the API client using process.env.API_KEY
-// For Veo, we might need to re-instantiate this, but for general use, this is fine.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize the API client using process.env.GEMINI_API_KEY
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 You are "Teki Ally", the advanced AI Sales Representative and Senior Consultant for Tekify Consult.
@@ -177,7 +176,7 @@ export const generateVeoVideo = async (imageFile: File, prompt: string, aspectRa
   }
 
   // Create new instance to pick up selected key
-  const veoAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const veoAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   
   const base64Data = await fileToBase64(imageFile);
   const mimeType = imageFile.type;
@@ -206,7 +205,7 @@ export const generateVeoVideo = async (imageFile: File, prompt: string, aspectRa
   if (!videoUri) throw new Error("Video generation failed.");
   
   // Return the playable URL (needs key appended)
-  return `${videoUri}&key=${process.env.API_KEY}`;
+  return `${videoUri}&key=${process.env.GEMINI_API_KEY}`;
 };
 
 // --- Audio ---

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build",
+    "start": "NODE_ENV=production node dist-server/server.js",
+    "build": "vite build && vite build -c vite.config.server.ts --mode production",
     "preview": "vite preview",
     "lint": "eslint ."
   },
@@ -19,6 +20,7 @@
     "express": "^5.2.1",
     "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.562.0",
+    "motion": "^12.34.3",
     "nodemailer": "^8.0.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -39,6 +41,6 @@
     "globals": "^17.3.0",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.56.1",
-    "vite": "^6.2.0"
+    "vite": "^6.4.1"
   }
 }

@@ -59,6 +59,15 @@ export interface ProcessStep {
   deliverables: string[];
 }
 
+export interface TeamMember {
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  linkedin?: string;
+  whatsapp?: string;
+}
+
 // --- NEW TYPES FOR BOOKING & INVOICING SYSTEM ---
 
 export interface TekifyCustomer {
