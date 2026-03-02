@@ -1,8 +1,16 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Modality } from "@google/genai";
 import { BUSINESS_INFO, SERVICES } from '../constants';
 
-// Initialize the API client using process.env.GEMINI_API_KEY
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// We will initialize the API client lazily inside the functions
+// to ensure it uses the most up-to-date API key.
+
+let aiInstance: GoogleGenAI | null = null;
+const getAI = () => {
+  if (!aiInstance) {
+    aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+  return aiInstance;
+};
 
 const SYSTEM_INSTRUCTION = `
 You are "Teki Ally", the advanced AI Sales Representative and Senior Consultant for Tekify Consult.
@@ -34,7 +42,7 @@ let chatSession: Chat | null = null;
 
 export const initChat = () => {
   if (!chatSession) {
-    chatSession = ai.chats.create({
+    chatSession = getAI().chats.create({
       model: 'gemini-3-flash-preview',
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -100,7 +108,7 @@ export const generateTextContent = async (
     model = 'gemini-3.1-pro-preview';
   }
 
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model,
     contents: prompt,
     config
@@ -120,7 +128,7 @@ export const generateImage = async (
   imageSize: string = "1K"
 ): Promise<string[]> => {
   // Uses gemini-3-pro-image-preview
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: 'gemini-3-pro-image-preview',
     contents: {
       parts: [{ text: prompt }],
@@ -146,7 +154,7 @@ export const analyzeImage = async (imageFile: File, prompt: string): Promise<str
   const base64Data = await fileToBase64(imageFile);
   const mimeType = imageFile.type;
 
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: 'gemini-3-pro-preview',
     contents: {
       parts: [
@@ -211,7 +219,7 @@ export const generateVeoVideo = async (imageFile: File, prompt: string, aspectRa
 // --- Audio ---
 
 export const generateSpeech = async (text: string, voiceName: string = 'Kore'): Promise<AudioBuffer> => {
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: "gemini-2.5-flash-preview-tts",
     contents: [{ parts: [{ text }] }],
     config: {
@@ -241,7 +249,7 @@ export const transcribeAudio = async (audioFile: File): Promise<string> => {
   const base64Data = await fileToBase64(audioFile);
   const mimeType = audioFile.type; // e.g. 'audio/mp3', 'audio/wav'
 
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: {
       parts: [

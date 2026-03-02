@@ -11,10 +11,6 @@ export default defineConfig(({ mode }) => {
         hmr: false,
       },
       plugins: [react()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
       preview: {
         port: 8080,
         host: '0.0.0.0',
