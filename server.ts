@@ -51,36 +51,29 @@ process.on('uncaughtException', (err) => {
 
 const app = express();
 
-async function startServer() {
-  console.log("Starting server process...");
-  console.log("NODE_ENV:", process.env.NODE_ENV);
-  
-  const PORT = parseInt(process.env.PORT || "3000", 10);
-  console.log(`Configured to listen on port: ${PORT}`);
+app.use(cors());
+app.use(express.json());
 
-  app.use(cors());
-  app.use(express.json());
+// Request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 
-  // Request logging
-  app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-  });
+// --- API ROUTES ---
 
-  // --- API ROUTES ---
+// Health Check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
 
-  // Health Check
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
+// Services Catalog
+app.get("/api/services", (req, res) => {
+  res.json(TEKIFY_SERVICES);
+});
 
-  // Services Catalog
-  app.get("/api/services", (req, res) => {
-    res.json(TEKIFY_SERVICES);
-  });
-
-  // Create Booking
-  app.post("/api/bookings", async (req, res) => {
+// Create Booking
+app.post("/api/bookings", async (req, res) => {
     const { customer, serviceId, notes } = req.body;
 
     try {
@@ -582,8 +575,15 @@ async function startServer() {
     }
   });
 
+async function startServer() {
+  console.log("Starting server process...");
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  
+  const PORT = parseInt(process.env.PORT || "3000", 10);
+  console.log(`Configured to listen on port: ${PORT}`);
+
   // --- VITE MIDDLEWARE ---
-  const isProd = process.env.NODE_ENV === "production" || process.env.K_SERVICE !== undefined;
+  const isProd = process.env.NODE_ENV === "production" || process.env.K_SERVICE !== undefined || process.env.VERCEL !== undefined;
   
   if (!isProd) {
     console.log("Running in DEVELOPMENT mode with Vite middleware");
