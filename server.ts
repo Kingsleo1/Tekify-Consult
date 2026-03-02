@@ -583,7 +583,7 @@ async function startServer() {
   console.log(`Configured to listen on port: ${PORT}`);
 
   // --- VITE MIDDLEWARE ---
-  const isProd = process.env.NODE_ENV === "production" || process.env.K_SERVICE !== undefined || process.env.VERCEL !== undefined;
+  const isProd = process.env.NODE_ENV === "production" || process.env.VERCEL !== undefined;
   
   if (!isProd) {
     console.log("Running in DEVELOPMENT mode with Vite middleware");
