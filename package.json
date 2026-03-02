@@ -7,6 +7,7 @@
     "dev": "tsx server.ts",
     "start": "NODE_ENV=production node dist-server/server.js",
     "build": "vite build && vite build -c vite.config.server.ts --mode production",
+    "vercel-build": "vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },

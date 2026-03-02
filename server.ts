@@ -49,11 +49,12 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+const app = express();
+
 async function startServer() {
   console.log("Starting server process...");
   console.log("NODE_ENV:", process.env.NODE_ENV);
   
-  const app = express();
   const PORT = parseInt(process.env.PORT || "3000", 10);
   console.log(`Configured to listen on port: ${PORT}`);
 
@@ -636,7 +637,12 @@ async function startServer() {
   });
 }
 
-startServer().catch(err => {
-  console.error("FATAL: Failed to start server:", err);
-  process.exit(1);
-});
+// Only start the server if not running on Vercel
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  startServer().catch(err => {
+    console.error("FATAL: Failed to start server:", err);
+    process.exit(1);
+  });
+}
+
+export default app;

@@ -6,13 +6,19 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
       server: {
-        port: 3000,
+        port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
         host: '0.0.0.0',
+        hmr: false,
       },
       plugins: [react()],
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      preview: {
+        port: 8080,
+        host: '0.0.0.0',
+        strictPort: true
       },
       resolve: {
         alias: {
