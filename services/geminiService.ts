@@ -5,7 +5,7 @@ import { BUSINESS_INFO, SERVICES } from '../constants';
 // to ensure it uses the most up-to-date API key.
 
 let aiInstance: GoogleGenAI | null = null;
-const getAI = () => {
+export const getAI = () => {
   if (!aiInstance) {
     aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }

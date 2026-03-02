@@ -19,7 +19,7 @@ import {
   playAudioBuffer,
   GenerationMode
 } from '../services/geminiService';
-import { GoogleGenAI, LiveServerMessage, Modality } from '@google/genai';
+import { LiveServerMessage, Modality } from '@google/genai';
 
 const AITools: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'vision' | 'audio'>('chat');
@@ -573,7 +573,7 @@ const LiveSessionButton: React.FC<{ onConnect: () => void }> = ({ onConnect }) =
     onConnect();
     // Live API Implementation
     // Note: In a real app, manage this state/cleanup more robustly
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAI();
     const inputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({sampleRate: 16000});
     const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({sampleRate: 24000});
     const outputNode = outputAudioContext.createGain();

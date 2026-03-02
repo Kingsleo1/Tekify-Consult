@@ -24,7 +24,17 @@ const getSupabase = () => {
     if (!supabaseUrl || !supabaseKey) {
       console.error("CRITICAL: Supabase environment variables are missing on the server.");
     }
-    supabase = createClient(supabaseUrl || "https://placeholder.supabase.co", supabaseKey || "placeholder");
+    let validUrl = "https://placeholder.supabase.co";
+    if (supabaseUrl) {
+      if (supabaseUrl.startsWith("http")) {
+        validUrl = supabaseUrl;
+      } else if (supabaseUrl.includes(".")) {
+        validUrl = `https://${supabaseUrl}`;
+      } else {
+        validUrl = `https://${supabaseUrl}.supabase.co`;
+      }
+    }
+    supabase = createClient(validUrl, supabaseKey || "placeholder");
   }
   return supabase;
 };

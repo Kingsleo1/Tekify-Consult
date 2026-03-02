@@ -4,8 +4,8 @@ let supabaseInstance: SupabaseClient | null = null;
 
 export const getSupabase = (): SupabaseClient => {
   if (!supabaseInstance) {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {
       console.warn("Supabase environment variables are missing or invalid. Some features may not work.");
@@ -14,7 +14,17 @@ export const getSupabase = (): SupabaseClient => {
     }
     
     // Ensure URL is valid for createClient
-    const validUrl = (supabaseUrl && supabaseUrl.startsWith('http')) ? supabaseUrl : 'https://placeholder.supabase.co';
+    let validUrl = 'https://placeholder.supabase.co';
+    if (supabaseUrl) {
+      if (supabaseUrl.startsWith('http')) {
+        validUrl = supabaseUrl;
+      } else if (supabaseUrl.includes('.')) {
+        validUrl = `https://${supabaseUrl}`;
+      } else {
+        // Assume it's a project ID
+        validUrl = `https://${supabaseUrl}.supabase.co`;
+      }
+    }
     const validKey = supabaseAnonKey || 'placeholder';
 
     supabaseInstance = createClient(validUrl, validKey);
