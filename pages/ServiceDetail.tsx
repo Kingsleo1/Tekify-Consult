@@ -87,7 +87,7 @@ const ServiceDetail: React.FC = () => {
                   
                   <div className="space-y-4">
                     <Link 
-                      to="/booking"
+                      to="/booking#booking-form"
                       state={{ serviceId: service.id }}
                       className="w-full py-6 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-2xl"
                     >

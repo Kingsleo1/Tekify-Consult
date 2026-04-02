@@ -108,7 +108,7 @@ const Booking: React.FC = () => {
         description="Tell us about your needs and schedule a consultation with our experts."
       />
       
-      <div className="py-32 px-4">
+      <div id="booking-form" className="py-16 lg:py-32 px-4">
       <div className="max-w-4xl mx-auto">
         
         {/* Progress Steps - Modern Minimal */}

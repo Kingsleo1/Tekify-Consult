@@ -62,7 +62,7 @@ const ProcessDetail: React.FC = () => {
             
             <div className="mt-20 flex flex-col sm:flex-row justify-between items-center gap-8 border-t border-slate-100 dark:border-white/5 pt-12">
                <span className="text-slate-400 font-black uppercase tracking-widest text-xs">Ready to move to this step?</span>
-               <Link to="/booking" className="inline-flex items-center gap-4 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group">
+               <Link to="/booking#booking-form" className="inline-flex items-center gap-4 px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group">
                  Schedule Consultation 
                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                </Link>

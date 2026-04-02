@@ -49,28 +49,80 @@ const AdminCustomers: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if email already exists
-      const { data: existing } = await supabase
+      const trimmedEmail = newCustomer.email.trim().toLowerCase();
+      const trimmedPhone = newCustomer.phone.trim();
+
+      // Check if email already exists (case-insensitive check)
+      const { data: existingEmails, error: emailError } = await supabase
         .from('tekify_customers')
         .select('id')
-        .eq('email', newCustomer.email)
-        .maybeSingle();
+        .ilike('email', trimmedEmail)
+        .limit(1);
 
-      if (existing) {
+      if (emailError) {
+        console.error("Email check error:", emailError);
+        throw new Error(`Error checking email: ${emailError.message || JSON.stringify(emailError)}`);
+      }
+
+      if (existingEmails && existingEmails.length > 0) {
         throw new Error('A customer with this email already exists.');
       }
 
+      // Check if phone already exists if provided
+      if (trimmedPhone) {
+        const { data: existingPhones, error: phoneError } = await supabase
+          .from('tekify_customers')
+          .select('id')
+          .eq('phone', trimmedPhone)
+          .limit(1);
+
+        if (phoneError) {
+          console.error("Phone check error:", phoneError);
+          throw new Error(`Error checking phone: ${phoneError.message || JSON.stringify(phoneError)}`);
+        }
+
+        if (existingPhones && existingPhones.length > 0) {
+          throw new Error('A customer with this phone number already exists.');
+        }
+      }
+
+      const generateUUID = () => {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      };
+
+      const customerToInsert = {
+        id: generateUUID(),
+        full_name: newCustomer.full_name.trim(),
+        email: trimmedEmail,
+        phone: trimmedPhone || null,
+        company_name: newCustomer.company_name.trim() || null,
+        address: newCustomer.address.trim() || null
+      };
+
       const { error } = await supabase
         .from('tekify_customers')
-        .insert([newCustomer]);
+        .insert([customerToInsert]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase Insert Error:", error);
+        if (error.code === '23505') {
+          throw new Error(`Duplicate record found. Constraint: ${error.message || error.details || JSON.stringify(error)}`);
+        }
+        throw new Error(error.message || 'Failed to add customer');
+      }
 
       toast.success('Customer added successfully!');
       setShowAddModal(false);
       setNewCustomer({ full_name: '', email: '', phone: '', company_name: '', address: '' });
       fetchCustomers();
     } catch (error: any) {
+      console.error("Add Customer Error:", error);
       toast.error(error.message || 'Failed to add customer');
     } finally {
       setIsSubmitting(false);

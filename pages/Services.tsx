@@ -76,7 +76,7 @@ const Services: React.FC = () => {
 
                   <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
                     <Link 
-                      to="/booking" 
+                      to="/booking#booking-form" 
                       state={{ serviceId: service.id }}
                       className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
                     >

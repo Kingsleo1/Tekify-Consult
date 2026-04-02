@@ -40,7 +40,7 @@ const PortfolioDetail: React.FC = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary-600 dark:text-primary-400 bg-primary-500/10 px-4 py-2 rounded-full border border-primary-500/20">
                 {project.category}
             </span>
-            <Link to="/booking" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-primary-600 hover:text-primary-500 transition-colors">
+            <Link to="/booking#booking-form" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-primary-600 hover:text-primary-500 transition-colors">
                 Start Similar Project <ArrowUpRight className="w-4 h-4" />
             </Link>
         </div>

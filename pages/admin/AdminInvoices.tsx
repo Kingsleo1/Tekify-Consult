@@ -224,43 +224,45 @@ const AdminInvoices: React.FC = () => {
 
   return (
     <div className="space-y-12">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h2 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white">Invoice Management</h2>
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div className="w-full lg:w-auto">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white">Invoice Management</h2>
           <p className="text-slate-500 font-medium mt-2">Track payments and manage financial records.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4">
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-3 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 transition-all"
+            className="flex items-center justify-center gap-3 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 transition-all w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" /> Create Invoice
           </button>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Search invoices..." 
-              className="pl-12 pr-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-            />
+          <div className="flex gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Search invoices..." 
+                className="w-full pl-12 pr-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+              />
+            </div>
+            <button className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl text-slate-500 hover:text-primary-600 transition-all">
+              <Filter className="w-5 h-5" />
+            </button>
           </div>
-          <button className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl text-slate-500 hover:text-primary-600 transition-all">
-            <Filter className="w-5 h-5" />
-          </button>
         </div>
       </header>
 
       {/* Invoices Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
+        <div className="overflow-x-auto scrollbar-hide">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-slate-100 dark:border-white/5">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Invoice #</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Client</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Amount</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                <th className="px-6 md:px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Invoice #</th>
+                <th className="px-6 md:px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Client</th>
+                <th className="px-6 md:px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Amount</th>
+                <th className="px-6 md:px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                <th className="px-6 md:px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-white/5">
@@ -276,21 +278,21 @@ const AdminInvoices: React.FC = () => {
                 </tr>
               ) : invoices.map((invoice) => (
                 <tr key={invoice.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
-                  <td className="px-8 py-6">
+                  <td className="px-6 md:px-8 py-6">
                     <div className="font-black text-primary-600 dark:text-primary-400">{invoice.invoice_number}</div>
                     <div className="text-[10px] text-slate-400 font-bold">Issued: {new Date(invoice.issued_at || '').toLocaleDateString()}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 md:px-8 py-6">
                     <div className="font-bold text-slate-900 dark:text-white">{invoice.tekify_customers?.full_name}</div>
                     <div className="text-xs text-slate-500">{invoice.tekify_customers?.email}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 md:px-8 py-6">
                     <div className="text-sm font-black text-slate-900 dark:text-white">₦{Number(invoice.total_amount).toLocaleString()}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 md:px-8 py-6">
                     <StatusBadge status={invoice.status} />
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-6 md:px-8 py-6 text-right">
                     <div className="flex justify-end gap-2">
                       {invoice.status === 'unpaid' && (
                         <button 
@@ -325,17 +327,17 @@ const AdminInvoices: React.FC = () => {
 
       {/* Create Invoice Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
-              <h3 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">Create New Invoice</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl md:rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
+              <h3 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white">Create New Invoice</h3>
               <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all">
                 <X className="w-6 h-6 text-slate-400" />
               </button>
             </div>
             
-            <form onSubmit={handleCreateInvoice} className="p-10 space-y-8 overflow-y-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form onSubmit={handleCreateInvoice} className="p-6 md:p-10 space-y-6 md:space-y-8 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Select Customer</label>
                   <div className="relative group">
@@ -344,7 +346,7 @@ const AdminInvoices: React.FC = () => {
                       required
                       value={selectedCustomerId}
                       onChange={(e) => setSelectedCustomerId(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all appearance-none dark:text-white"
+                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all appearance-none dark:text-white text-sm"
                     >
                       <option value="" className="dark:bg-slate-900">Select a customer...</option>
                       {customers.map(c => <option key={c.id} value={c.id} className="dark:bg-slate-900">{c.full_name} ({c.email})</option>)}
@@ -360,7 +362,7 @@ const AdminInvoices: React.FC = () => {
                       required
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
+                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white text-sm"
                     />
                   </div>
                 </div>
@@ -372,7 +374,7 @@ const AdminInvoices: React.FC = () => {
                   value={additionalNote}
                   onChange={(e) => setAdditionalNote(e.target.value)}
                   placeholder="Add any additional notes or terms..."
-                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px] text-sm"
                 />
               </div>
 
@@ -390,8 +392,8 @@ const AdminInvoices: React.FC = () => {
 
                 <div className="space-y-4">
                   {items.map((item, index) => (
-                    <div key={index} className="grid grid-cols-12 gap-4 items-end bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10">
-                      <div className="col-span-12 md:col-span-5 space-y-2">
+                    <div key={index} className="grid grid-cols-12 gap-3 md:gap-4 items-end bg-slate-50 dark:bg-white/5 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-white/10">
+                      <div className="col-span-12 lg:col-span-5 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Service / Description</label>
                         <div className="relative group">
                           <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
@@ -414,7 +416,7 @@ const AdminInvoices: React.FC = () => {
                           />
                         )}
                       </div>
-                      <div className="col-span-6 md:col-span-3 space-y-2">
+                      <div className="col-span-6 lg:col-span-3 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Unit Price (₦)</label>
                         <input 
                           type="number"
@@ -423,7 +425,7 @@ const AdminInvoices: React.FC = () => {
                           className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl outline-none text-sm dark:text-white"
                         />
                       </div>
-                      <div className="col-span-4 md:col-span-2 space-y-2">
+                      <div className="col-span-4 lg:col-span-2 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Qty</label>
                         <input 
                           type="number"
@@ -432,7 +434,7 @@ const AdminInvoices: React.FC = () => {
                           className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl outline-none text-sm dark:text-white"
                         />
                       </div>
-                      <div className="col-span-2 md:col-span-2 flex justify-end">
+                      <div className="col-span-2 lg:col-span-2 flex justify-end">
                         <button 
                           type="button" 
                           onClick={() => handleRemoveItem(index)}
@@ -446,8 +448,8 @@ const AdminInvoices: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between items-end pt-8 border-t border-slate-100 dark:border-white/5">
-                <div className="space-y-1">
+              <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-8 pt-8 border-t border-slate-100 dark:border-white/5">
+                <div className="w-full md:w-auto space-y-1">
                   <div className="flex justify-between gap-8 text-xs font-bold text-slate-500">
                     <span>Subtotal:</span>
                     <span>₦{items.reduce((acc, item) => acc + (item.unit_price * item.quantity), 0).toLocaleString()}</span>
@@ -458,23 +460,23 @@ const AdminInvoices: React.FC = () => {
                   </div>
                   <div className="pt-2">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Amount</p>
-                    <p className="text-3xl font-black text-slate-900 dark:text-white">
+                    <p className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">
                       ₦{(items.reduce((acc, item) => acc + (item.unit_price * item.quantity), 0) * 1.075).toLocaleString()}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
                   <button 
                     type="button" 
                     onClick={() => setShowCreateModal(false)}
-                    className="px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                    className="w-full sm:w-auto px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="px-8 py-4 bg-primary-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary-600/20 flex items-center justify-center gap-3"
+                    className="w-full sm:w-auto px-8 py-4 bg-primary-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary-600/20 flex items-center justify-center gap-3"
                   >
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate Invoice'}
                   </button>
@@ -486,17 +488,17 @@ const AdminInvoices: React.FC = () => {
       )}
       {/* Edit Invoice Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
-              <h3 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">Edit Invoice</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl md:rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/5 overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
+              <h3 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white">Edit Invoice</h3>
               <button onClick={() => { setShowEditModal(false); setEditingInvoiceId(null); }} className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-all">
                 <X className="w-6 h-6 text-slate-400" />
               </button>
             </div>
             
-            <form onSubmit={handleUpdateInvoice} className="p-10 space-y-8 overflow-y-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form onSubmit={handleUpdateInvoice} className="p-6 md:p-10 space-y-6 md:space-y-8 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Select Customer</label>
                   <div className="relative group">
@@ -505,7 +507,7 @@ const AdminInvoices: React.FC = () => {
                       required
                       value={selectedCustomerId}
                       onChange={(e) => setSelectedCustomerId(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all appearance-none dark:text-white"
+                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all appearance-none dark:text-white text-sm"
                     >
                       <option value="" className="dark:bg-slate-900">Select a customer...</option>
                       {customers.map(c => <option key={c.id} value={c.id} className="dark:bg-slate-900">{c.full_name} ({c.email})</option>)}
@@ -521,7 +523,7 @@ const AdminInvoices: React.FC = () => {
                       required
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
+                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white text-sm"
                     />
                   </div>
                 </div>
@@ -533,7 +535,7 @@ const AdminInvoices: React.FC = () => {
                   value={additionalNote}
                   onChange={(e) => setAdditionalNote(e.target.value)}
                   placeholder="Add any additional notes or terms..."
-                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px]"
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white min-h-[100px] text-sm"
                 />
               </div>
 
@@ -551,8 +553,8 @@ const AdminInvoices: React.FC = () => {
 
                 <div className="space-y-4">
                   {items.map((item, index) => (
-                    <div key={index} className="grid grid-cols-12 gap-4 items-end bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10">
-                      <div className="col-span-12 md:col-span-5 space-y-2">
+                    <div key={index} className="grid grid-cols-12 gap-3 md:gap-4 items-end bg-slate-50 dark:bg-white/5 p-4 md:p-6 rounded-2xl border border-slate-200 dark:border-white/10">
+                      <div className="col-span-12 lg:col-span-5 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Service / Description</label>
                         <div className="relative group">
                           <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
@@ -575,7 +577,7 @@ const AdminInvoices: React.FC = () => {
                           />
                         )}
                       </div>
-                      <div className="col-span-6 md:col-span-3 space-y-2">
+                      <div className="col-span-6 lg:col-span-3 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Unit Price (₦)</label>
                         <input 
                           type="number"
@@ -584,7 +586,7 @@ const AdminInvoices: React.FC = () => {
                           className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl outline-none text-sm dark:text-white"
                         />
                       </div>
-                      <div className="col-span-4 md:col-span-2 space-y-2">
+                      <div className="col-span-4 lg:col-span-2 space-y-2">
                         <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Qty</label>
                         <input 
                           type="number"
@@ -593,7 +595,7 @@ const AdminInvoices: React.FC = () => {
                           className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl outline-none text-sm dark:text-white"
                         />
                       </div>
-                      <div className="col-span-2 md:col-span-2 flex justify-end">
+                      <div className="col-span-2 lg:col-span-2 flex justify-end">
                         <button 
                           type="button" 
                           onClick={() => handleRemoveItem(index)}
@@ -607,8 +609,8 @@ const AdminInvoices: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between items-end pt-8 border-t border-slate-100 dark:border-white/5">
-                <div className="space-y-1">
+              <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-8 pt-8 border-t border-slate-100 dark:border-white/5">
+                <div className="w-full md:w-auto space-y-1">
                   <div className="flex justify-between gap-8 text-xs font-bold text-slate-500">
                     <span>Subtotal:</span>
                     <span>₦{items.reduce((acc, item) => acc + (item.unit_price * item.quantity), 0).toLocaleString()}</span>
@@ -619,23 +621,23 @@ const AdminInvoices: React.FC = () => {
                   </div>
                   <div className="pt-2">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Amount</p>
-                    <p className="text-3xl font-black text-slate-900 dark:text-white">
+                    <p className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">
                       ₦{(items.reduce((acc, item) => acc + (item.unit_price * item.quantity), 0) * 1.075).toLocaleString()}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
                   <button 
                     type="button" 
                     onClick={() => { setShowEditModal(false); setEditingInvoiceId(null); }}
-                    className="px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
+                    className="w-full sm:w-auto px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="px-8 py-4 bg-primary-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary-600/20 flex items-center justify-center gap-3"
+                    className="w-full sm:w-auto px-8 py-4 bg-primary-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary-600/20 flex items-center justify-center gap-3"
                   >
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Update Invoice'}
                   </button>

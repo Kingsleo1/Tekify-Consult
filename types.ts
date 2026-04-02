@@ -127,5 +127,6 @@ export interface TekifyReceipt {
   amount_paid: number;
   issued_at?: string;
   additional_note?: string;
+  additional_items?: any[];
   tekify_invoices?: TekifyInvoice;
 }

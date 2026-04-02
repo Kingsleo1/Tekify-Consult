@@ -51,7 +51,7 @@ const Portfolio: React.FC = () => {
         <div className="mt-48 text-center">
           <h3 className="text-xs font-black uppercase tracking-[0.4em] text-primary-600 dark:text-primary-400 mb-8">Ready to be next?</h3>
           <h4 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] mb-16">Let's build your <br />success story.</h4>
-          <Link to="/booking" className="inline-flex items-center justify-center px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
+          <Link to="/booking#booking-form" className="inline-flex items-center justify-center px-12 py-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
             Start A Project
             <ArrowUpRight className="ml-3 w-6 h-6" />
           </Link>

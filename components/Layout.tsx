@@ -107,7 +107,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </button>
 
               <NavLink
-                to="/booking"
+                to="/booking#booking-form"
                 className="px-8 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-widest shadow-xl hover:shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all duration-500 border border-transparent dark:border-white/10"
               >
                 Get Started
@@ -180,7 +180,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
               <div className="mt-auto pt-8 border-t border-slate-200 dark:border-white/10">
                 <NavLink
-                  to="/booking"
+                  to="/booking#booking-form"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-center px-6 py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-lg font-black uppercase tracking-widest shadow-2xl"
                 >

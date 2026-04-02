@@ -58,6 +58,8 @@ BEGIN
 END $$;
 
 -- 2. Customers Table
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS tekify_customers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     full_name TEXT NOT NULL,
@@ -67,6 +69,14 @@ CREATE TABLE IF NOT EXISTS tekify_customers (
     address TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Fix missing default value for id if it was created without it
+DO $$
+BEGIN
+    ALTER TABLE tekify_customers ALTER COLUMN id SET DEFAULT uuid_generate_v4();
+EXCEPTION
+    WHEN others THEN null;
+END $$;
 
 -- Add address column if it doesn't exist (for existing tables)
 DO $$
@@ -131,8 +141,21 @@ CREATE TABLE IF NOT EXISTS tekify_receipts (
     invoice_id UUID REFERENCES tekify_invoices(id),
     payment_method TEXT,
     amount_paid DECIMAL(12, 2) NOT NULL,
-    issued_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    additional_items JSONB DEFAULT '[]'::jsonb,
+    issued_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    additional_note TEXT
 );
+
+-- Add additional_items and additional_note columns if they don't exist (for existing tables)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tekify_receipts' AND column_name = 'additional_items') THEN
+        ALTER TABLE tekify_receipts ADD COLUMN additional_items JSONB DEFAULT '[]'::jsonb;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tekify_receipts' AND column_name = 'additional_note') THEN
+        ALTER TABLE tekify_receipts ADD COLUMN additional_note TEXT;
+    END IF;
+END $$;
 
 -- 7. Email Logs
 CREATE TABLE IF NOT EXISTS tekify_email_logs (

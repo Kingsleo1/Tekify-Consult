@@ -58,7 +58,7 @@ const WhyTekifyDetail: React.FC = () => {
           <div className="mt-24 pt-16 border-t border-slate-100 dark:border-white/5 text-center">
             <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-8">Experience the Difference</h3>
             <div className="flex justify-center gap-6">
-               <Link to="/booking" className="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
+               <Link to="/booking#booking-form" className="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
                  Start a Project
                </Link>
             </div>

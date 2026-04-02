@@ -72,7 +72,7 @@ const Home: React.FC = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-6 animate-in fade-in slide-in-from-left-8 duration-700 delay-300">
-                <Link to="/booking" className="inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl shadow-primary-500/20">
+                <Link to="/booking#booking-form" className="inline-flex items-center justify-center px-10 py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl shadow-primary-500/20">
                   Start Project
                   <ArrowRight className="ml-3 w-5 h-5" />
                 </Link>
@@ -192,7 +192,7 @@ const Home: React.FC = () => {
                   <p className="text-slate-600 dark:text-slate-400 text-sm mb-8 font-medium leading-relaxed">{item.shortDesc}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black uppercase tracking-widest text-primary-600 dark:text-primary-400">Read More</span>
-                    <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-primary-600 group-hover:border-primary-600 group-hover:text-white transition-all duration-500">
+                    <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:bg-primary-600 group-hover:border-primary-600 group-hover:text-white transition-all duration-500 text-primary-600">
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
@@ -360,7 +360,7 @@ const Home: React.FC = () => {
               <div key={project.id} className="group relative rounded-[2rem] sm:rounded-[4rem] overflow-hidden aspect-[4/3] shadow-2xl cursor-pointer">
                 <img src={project.image} alt={project.title} className="object-cover w-full h-full transform group-hover:scale-110 transition-all duration-[2s] grayscale group-hover:grayscale-0" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-8 sm:p-12 flex flex-col justify-end">
-                   <span className="text-primary-400 text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] mb-2 sm:mb-4">{project.category}</span>
+                   <span className="text-black text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] mb-2 sm:mb-4">{project.category}</span>
                    <h3 className="text-2xl sm:text-4xl font-black tracking-tighter text-white mb-2 sm:mb-4 leading-tight">{project.title}</h3>
                    <p className="text-slate-300 text-sm sm:text-lg font-medium line-clamp-2 max-w-md mb-6 sm:mb-8">{project.description}</p>
                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-primary-600 transition-all duration-500">
@@ -472,7 +472,7 @@ const Home: React.FC = () => {
                   </span>
                 ))}
               </div>
-              <Link to="/booking" className="inline-flex items-center gap-4 group">
+              <Link to="/booking#booking-form" className="inline-flex items-center gap-4 group">
                 <span className="text-xs font-black uppercase tracking-widest text-primary-400">Book a Strategy Session</span>
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary-600 group-hover:border-primary-600 group-hover:text-white transition-all duration-500">
                   <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -510,7 +510,7 @@ const Home: React.FC = () => {
               Join the forward-thinking companies that trust Tekify Consult for their digital evolution.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
-              <Link to="/booking" className="px-10 py-5 sm:px-12 sm:py-6 bg-white text-slate-900 font-black uppercase tracking-widest rounded-xl sm:rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
+              <Link to="/booking#booking-form" className="px-10 py-5 sm:px-12 sm:py-6 bg-white text-slate-900 font-black uppercase tracking-widest rounded-xl sm:rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl">
                 Get a Quote
               </Link>
                <Link to="/contact" className="px-10 py-5 sm:px-12 sm:py-6 bg-transparent border border-white/30 text-white font-black uppercase tracking-widest rounded-xl sm:rounded-2xl hover:bg-white/10 transition-all duration-300">

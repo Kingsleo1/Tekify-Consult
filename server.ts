@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { TEKIFY_SERVICES } from "./services/pricingService";
 
@@ -77,6 +78,40 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+// Debug Customers
+app.get("/api/debug/customers", async (req, res) => {
+  try {
+    const { data, error } = await getSupabase().from('tekify_customers').select('*');
+    res.json({ data, error });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get("/api/debug/insert", async (req, res) => {
+  try {
+    const { data, error } = await getSupabase().from('tekify_bookings').insert([{
+      customer_id: '3c9da58d-9fd4-412c-9fd1-391dcec02c77',
+      service_id: 'dm-foundation',
+      notes: 'Test booking'
+    }]).select();
+    res.json({ data, error });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get("/api/debug/columns", async (req, res) => {
+  try {
+    // Supabase JS client doesn't support querying information_schema directly.
+    // Let's try to use RPC or just fetch a single row to see what's there.
+    const { data, error } = await getSupabase().from('tekify_customers').select('*').limit(1);
+    res.json({ data, error });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Services Catalog
 app.get("/api/services", (req, res) => {
   res.json(TEKIFY_SERVICES);
@@ -88,23 +123,26 @@ app.post("/api/bookings", async (req, res) => {
 
     try {
       // 1. Find or Create Customer
-      const { data: existingCustomer, error: findError } = await getSupabase()
+      const { data: existingCustomers, error: findError } = await getSupabase()
         .from("tekify_customers")
         .select("id")
-        .eq("email", customer.email)
-        .maybeSingle();
+        .ilike("email", customer.email.trim())
+        .limit(1);
 
-      if (findError && findError.code !== 'PGRST116') {
+      if (findError) {
         console.error("Find Customer Error:", findError);
       }
 
       let customerId;
-      if (existingCustomer) {
-        customerId = existingCustomer.id;
+      if (existingCustomers && existingCustomers.length > 0) {
+        customerId = existingCustomers[0].id;
       } else {
-        // Ensure we don't pass an ID to insert, letting Supabase generate it
-        const customerToInsert = { ...customer };
-        delete (customerToInsert as any).id;
+        // Generate a UUID to prevent null or duplicate id errors
+        const customerToInsert = { 
+          ...customer, 
+          id: crypto.randomUUID(),
+          email: customer.email.trim().toLowerCase() 
+        };
         const { data: newCustomer, error: custError } = await getSupabase()
           .from("tekify_customers")
           .insert([customerToInsert])
@@ -114,13 +152,13 @@ app.post("/api/bookings", async (req, res) => {
         if (custError) {
           // If it failed because it was created in the meantime (race condition)
           if (custError.code === '23505') {
-            const { data: retryCustomer } = await getSupabase()
+            const { data: retryCustomers } = await getSupabase()
               .from("tekify_customers")
               .select("id")
-              .eq("email", customer.email)
-              .single();
-            if (retryCustomer) {
-              customerId = retryCustomer.id;
+              .ilike("email", customer.email.trim())
+              .limit(1);
+            if (retryCustomers && retryCustomers.length > 0) {
+              customerId = retryCustomers[0].id;
             } else {
               throw custError;
             }
@@ -462,7 +500,7 @@ app.post("/api/bookings", async (req, res) => {
 
   // --- MANUAL RECEIPT CREATION ---
   app.post("/api/admin/receipts", async (req, res) => {
-    const { invoiceId, paymentMethod, amountPaid, additionalNote } = req.body;
+    const { invoiceId, paymentMethod, amountPaid, additionalNote, additionalItems } = req.body;
 
     try {
       const receiptNumber = `RCP-${Date.now()}`;
@@ -473,7 +511,8 @@ app.post("/api/bookings", async (req, res) => {
           invoice_id: invoiceId,
           payment_method: paymentMethod,
           amount_paid: amountPaid,
-          additional_note: additionalNote
+          additional_note: additionalNote,
+          additional_items: additionalItems || []
         }])
         .select()
         .single();
@@ -537,7 +576,7 @@ app.post("/api/bookings", async (req, res) => {
   // --- UPDATE RECEIPT ---
   app.put("/api/admin/receipts/:id", async (req, res) => {
     const receiptId = req.params.id;
-    const { paymentMethod, amountPaid, additionalNote } = req.body;
+    const { paymentMethod, amountPaid, additionalNote, additionalItems } = req.body;
 
     try {
       const { data: receipt, error: recError } = await getSupabase()
@@ -545,7 +584,8 @@ app.post("/api/bookings", async (req, res) => {
         .update({
           payment_method: paymentMethod,
           amount_paid: amountPaid,
-          additional_note: additionalNote
+          additional_note: additionalNote,
+          additional_items: additionalItems || []
         })
         .eq("id", receiptId)
         .select()

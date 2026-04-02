@@ -157,16 +157,25 @@ export const generateInvoicePDF = (invoice: any) => {
 export const generateReceiptPDF = (receipt: any) => {
   const element = document.createElement('div');
   
-  const itemsHtml = receipt.tekify_invoices?.tekify_invoice_items?.map((item: any) => `
+  let allItems = [];
+  if (receipt.tekify_invoices?.tekify_invoice_items) {
+    allItems = [...receipt.tekify_invoices.tekify_invoice_items];
+  }
+  if (receipt.additional_items && Array.isArray(receipt.additional_items)) {
+    allItems = [...allItems, ...receipt.additional_items];
+  }
+
+  const itemsHtml = allItems.length > 0 ? allItems.map((item: any) => `
     <tr style="border-bottom: 1px solid #e2e8f0;">
       <td style="padding: 12px 0;">
         <p style="font-size: 13px; font-weight: 600; color: #1e293b; margin: 0;">${item.service_name}</p>
+        ${item.quantity > 1 ? `<p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Qty: ${item.quantity} x ₦${Number(item.unit_price).toLocaleString()}</p>` : ''}
       </td>
       <td style="text-align: right; padding: 12px 0;">
         <p style="font-size: 13px; font-weight: 600; color: #1e293b; margin: 0;">₦${Number(item.total).toLocaleString()}</p>
       </td>
     </tr>
-  `).join('') || `
+  `).join('') : `
     <tr style="border-bottom: 1px solid #e2e8f0;">
       <td style="padding: 12px 0;">
         <p style="font-size: 13px; font-weight: 600; color: #1e293b; margin: 0;">Services</p>
