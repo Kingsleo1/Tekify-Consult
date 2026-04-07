@@ -4,7 +4,7 @@ export const BUSINESS_INFO = {
   name: "Tekify Consult",
   website: "tekifyconsult.com.ng",
   email: "info@tekifyconsult.com.ng",
-  phone: "07040586869, 08031157789",
+  phone: "07040586869, 08031175589",
   whatsapp: "2348031175589", // International format
   address: "4th Floor Los Angeles Mall, Kado Abuja",
   mapUrl: "https://maps.google.com/?q=Los+Angeles+Mall,+Kado,+Abuja",
