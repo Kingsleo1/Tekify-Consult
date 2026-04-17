@@ -5,8 +5,6 @@ import {
   Languages, FileAudio, ExternalLink, Download 
 } from 'lucide-react';
 import PageHero from '../components/PageHero';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 import { 
@@ -196,9 +194,10 @@ const ChatTool: React.FC = () => {
             }`}>
               {msg.role === 'model' ? (
                 <div id={`response-${i}`}>
-                  <div className="markdown-body prose dark:prose-invert max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-                  </div>
+                   <div 
+                     className="markdown-body prose dark:prose-invert max-w-none"
+                     dangerouslySetInnerHTML={{ __html: msg.text }}
+                   />
                 </div>
               ) : (
                 <div className="whitespace-pre-wrap">{msg.text}</div>
@@ -225,11 +224,27 @@ const ChatTool: React.FC = () => {
               )}
 
               {msg.role === 'model' && (
-                <div className="mt-6 flex gap-4 border-t border-slate-100 dark:border-white/10 pt-4">
-                  <button onClick={() => downloadPDF(`response-${i}`)} className="text-xs font-bold text-slate-500 hover:text-primary-600 flex items-center gap-2 transition-colors">
+                <div className="mt-6 flex flex-wrap gap-4 border-t border-slate-100 dark:border-white/10 pt-4">
+                  <button onClick={() => downloadPDF(`response-${i}`)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-primary-600 flex items-center gap-2 transition-colors border border-slate-200 dark:border-white/10 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md">
                     <Download className="w-4 h-4" /> Download PDF
                   </button>
-                  <button onClick={() => listenToText(msg.text)} className="text-xs font-bold text-slate-500 hover:text-primary-600 flex items-center gap-2 transition-colors">
+                  <button onClick={async () => {
+                     const el = document.getElementById(`response-${i}`);
+                     if (!el) return;
+                     try {
+                        const opt = { margin: 0.5, filename: 'tekify-record.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+                        const pdfBlob = await html2pdf().set(opt).from(el).output('blob');
+                        const file = new File([pdfBlob], 'tekify-record.pdf', { type: 'application/pdf' });
+                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                          await navigator.share({ files: [file], title: 'Tekify Response', text: 'Here is the detailed response from Tekify Consult.' });
+                        } else {
+                          alert('System sharing is not supported on your current browser. You can download the PDF instead.');
+                        }
+                     } catch (err) { console.error(err); alert('Failed to share.'); }
+                  }} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-accent-purple flex items-center gap-2 transition-colors border border-slate-200 dark:border-white/10 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md">
+                    <ExternalLink className="w-4 h-4" /> Share PDF
+                  </button>
+                  <button onClick={() => listenToText(msg.text)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-accent-cyan flex items-center gap-2 transition-colors border border-slate-200 dark:border-white/10 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md">
                     <Volume2 className="w-4 h-4" /> Listen
                   </button>
                 </div>

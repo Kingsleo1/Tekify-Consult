@@ -162,8 +162,8 @@ const AdminCustomers: React.FC = () => {
       </div>
 
       {/* Customers Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden w-full">
+        <div className="w-full overflow-x-auto overflow-y-hidden break-words touch-pan-x">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-100 dark:border-white/5">

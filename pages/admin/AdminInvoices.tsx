@@ -253,8 +253,8 @@ const AdminInvoices: React.FC = () => {
       </header>
 
       {/* Invoices Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden">
-        <div className="overflow-x-auto scrollbar-hide">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-xl overflow-hidden w-full">
+        <div className="w-full overflow-x-auto overflow-y-hidden break-words touch-pan-x">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-slate-100 dark:border-white/5">

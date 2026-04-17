@@ -11,8 +11,24 @@ const ServiceDetail: React.FC = () => {
 
   useEffect(() => {
     const fetchService = async () => {
-      const { data } = await supabase.from('tekify_services').select('*').eq('id', id).single();
-      setService(data);
+      try {
+        const { data, error } = await supabase.from('tekify_services').select('*').eq('id', id).single();
+        if (error || !data) throw new Error("DB Error");
+        setService(data);
+      } catch (e) {
+        console.warn("Falling back to hardcoded TEKIFY_SERVICES", e);
+        import('../services/pricingService').then(module => {
+          const fallbackService = module.TEKIFY_SERVICES.find(s => s.id === id);
+          setService({
+            id: fallbackService?.id,
+            title: fallbackService?.name,
+            description: fallbackService?.category,
+            features: fallbackService?.features,
+            price: fallbackService?.price ? `₦${fallbackService.price.toLocaleString()}` : "Custom Pricing",
+            icon: 'Briefcase'
+          });
+        });
+      }
       setLoading(false);
     };
     fetchService();

@@ -1,13 +1,19 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Modality } from "@google/genai";
 import { BUSINESS_INFO, SERVICES } from '../constants';
+import { TEKIFY_SERVICES } from './pricingService';
 
 // We will initialize the API client lazily inside the functions
 // to ensure it uses the most up-to-date API key.
 
 let aiInstance: GoogleGenAI | null = null;
+
 export const getAI = () => {
-  if (!aiInstance) {
-    aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  if (!aiInstance && process.env.GEMINI_API_KEY) {
+    try {
+      aiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    } catch {
+      console.warn("Failed to initialize Google Gen AI. API key may be invalid.");
+    }
   }
   return aiInstance;
 };
@@ -19,11 +25,10 @@ Your goal is to be helpful, professional, persuasive, and ultimately convert vis
 IMPORTANT: You are authorized to talk to customers about EVERYTHING concerning the site, as well as every other area or topic they might ask about. Do not restrict yourself to only business or consulting topics. Be a helpful, knowledgeable assistant in all domains.
 
 OUTPUT FORMATTING:
-- Use clear headings (##) and subheadings (###) to organize information.
-- Use bullet points and numbered lists for readability.
-- Use bold text for emphasis on key benefits or features.
-- Provide structured, scannable responses that look professional.
-- The frontend will render your markdown, so the user will see properly formatted text, not raw * or # characters.
+- DO NOT use any markdown characters like asterisks (*) or hash (#).
+- Format your response clearly using standard text, numbered lists, bullet points (using simple dashes -), or standard HTML tags (<br>, <b>, <p>, <h3>, <ul>, <li>) for structure.
+- Provide structured, scannable, deeply reasoned responses that look highly professional for PDF quotations.
+- Always be very neat with spacing and paragraphs.
 
 BUSINESS INFORMATION:
 Name: ${BUSINESS_INFO.name}
@@ -38,11 +43,56 @@ ${SERVICES.map(s => `- ${s.title}: ${s.description} (Starting at ${s.price})`).j
 
 let chatSession: Chat | null = null;
 
+// --- Fallback Smart Responder & Calculator ---
+const getSmartFallbackResponse = (message: string): string => {
+  const lowerMsg = message.toLowerCase();
+  
+  // Handling quotation requests
+  if (lowerMsg.includes('quote') || lowerMsg.includes('price') || lowerMsg.includes('cost') || lowerMsg.includes('estimate') || lowerMsg.includes('how much')) {
+    let quoteHTML = `<h3><b>Quotation from ${BUSINESS_INFO.name}</b></h3><p>Based on your inquiry, here is a professional breakdown of our service pricing offerings:</p><ul>`;
+    
+    let totalEstimated = 0;
+    let itemsFound = 0;
+    
+    TEKIFY_SERVICES.forEach(service => {
+      if (lowerMsg.includes(service.name.toLowerCase().split(' ')[0]) || lowerMsg.includes(service.category.toLowerCase())) {
+        quoteHTML += `<li><b>${service.name}</b> - ₦${service.price.toLocaleString()}</li>`;
+        totalEstimated += service.price;
+        itemsFound++;
+      }
+    });
+
+    if (itemsFound === 0) {
+      // General quote
+      TEKIFY_SERVICES.slice(0, 4).forEach(service => {
+        quoteHTML += `<li><b>${service.name}</b> - Starting at ₦${service.price.toLocaleString()}</li>`;
+      });
+      quoteHTML += `</ul><br><p>Let us know your exact requirements for a tailor-made quotation.</p>`;
+      return quoteHTML;
+    }
+    
+    quoteHTML += `</ul><br><p><b>Estimated Total Subtotal:</b> ₦${totalEstimated.toLocaleString()}</p>`;
+    quoteHTML += `<p>This is a smart estimated quotation. We provide highly tailored solutions for our clients. Let's schedule a call to finalize the package.</p>`;
+    return quoteHTML;
+  }
+  
+  // General Help Responses
+  if (lowerMsg.includes('service') || lowerMsg.includes('what do you do')) {
+    return `<h3><b>Our Expertise</b></h3><p>At ${BUSINESS_INFO.name}, we specialize in cutting-edge tech and digital solutions. Our core services include:</p><ul><li><b>Digital Marketing & SEO</b></li><li><b>Web & Mobile App Development</b></li><li><b>Cloud Architecture & Enterprise Solutions</b></li></ul><br><p>How can I assist your business today?</p>`;
+  }
+  
+  if (lowerMsg.includes('contact') || lowerMsg.includes('call') || lowerMsg.includes('where')) {
+    return `<h3><b>Contact Information</b></h3><p>You can reach us seamlessly through:</p><ul><li><b>Email:</b> ${BUSINESS_INFO.email}</li><li><b>Phone:</b> ${BUSINESS_INFO.phone}</li><li><b>Office:</b> ${BUSINESS_INFO.address}</li></ul>`;
+  }
+
+  return `<h3><b>Support Response</b></h3><p>Thank you for reaching out to ${BUSINESS_INFO.name}. Our AI connection is currently operating in offline fallback mode.</p><p>We have carefully noted your inquiry: "<i>${message}</i>". To give you the most detailed and reasoned response, please reach out directly or check out our premium services on our platform.</p>`;
+};
+
 // --- Chat & Text Generation ---
 
 export const initChat = () => {
-  if (!chatSession) {
-    chatSession = getAI().chats.create({
+  if (!chatSession && getAI()) {
+    chatSession = getAI()!.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -54,21 +104,31 @@ export const initChat = () => {
 };
 
 export const sendMessageToTeki = async (message: string): Promise<AsyncIterable<string>> => {
-  const session = initChat();
   try {
+    const aiClient = getAI();
+    if (!aiClient) throw new Error("API Key missing");
+    
+    const session = initChat();
+    if (!session) throw new Error("Failed to initialize session");
+    
     const result = await session.sendMessageStream({ message });
     async function* streamGenerator() {
       for await (const chunk of result) {
         const responseChunk = chunk as GenerateContentResponse;
         if (responseChunk.text) {
-          yield responseChunk.text;
+          // Clean asterisks just to be absolutely sure
+          yield responseChunk.text.replace(/[*#]/g, '');
         }
       }
     }
     return streamGenerator();
-  } catch (error) {
-    console.error("Error talking to Teki:", error);
-    throw error;
+  } catch {
+    console.warn("Falling back to Smart Offline Responder");
+    const fallbackText = getSmartFallbackResponse(message);
+    async function* mockStream() {
+      yield fallbackText;
+    }
+    return mockStream();
   }
 };
 
@@ -82,42 +142,52 @@ export const generateTextContent = async (
   userLocation?: { latitude: number; longitude: number },
   systemInstruction?: string
 ) => {
-  let model = 'gemini-3.1-pro-preview';
-  let config: any = {
-    systemInstruction: systemInstruction || SYSTEM_INSTRUCTION
-  };
+  try {
+    const aiClient = getAI();
+    if (!aiClient) throw new Error("API Key missing");
 
-  if (mode === 'fast') {
-    model = 'gemini-3-flash-preview';
-  } else if (mode === 'thinking') {
-    model = 'gemini-3.1-pro-preview';
-    // thinkingLevel is the correct parameter for Gemini 3
-  } else if (mode === 'maps') {
-    model = 'gemini-2.5-flash';
-    config = {
-      ...config,
-      tools: [{ googleMaps: {} }],
-      toolConfig: userLocation ? {
-        retrievalConfig: {
-          latLng: userLocation
-        }
-      } : undefined
+    let model = 'gemini-3.1-pro-preview';
+    let config: any = {
+      systemInstruction: systemInstruction || SYSTEM_INSTRUCTION
     };
-  } else {
-    // Standard chat bot experience
-    model = 'gemini-3.1-pro-preview';
+
+    if (mode === 'fast') {
+      model = 'gemini-3-flash-preview';
+    } else if (mode === 'thinking') {
+      model = 'gemini-3.1-pro-preview';
+      // thinkingLevel is the correct parameter for Gemini 3
+    } else if (mode === 'maps') {
+      model = 'gemini-2.5-flash';
+      config = {
+        ...config,
+        tools: [{ googleMaps: {} }],
+        toolConfig: userLocation ? {
+          retrievalConfig: {
+            latLng: userLocation
+          }
+        } : undefined
+      };
+    } else {
+      model = 'gemini-3.1-pro-preview';
+    }
+
+    const response = await aiClient.models.generateContent({
+      model,
+      contents: prompt,
+      config
+    });
+
+    return {
+      text: (response.text || "").replace(/[*#]/g, ''),
+      groundingMetadata: response.candidates?.[0]?.groundingMetadata
+    };
+  } catch {
+    console.warn("Falling back to Smart Offline Responder");
+    return {
+      text: getSmartFallbackResponse(prompt),
+      groundingMetadata: undefined
+    };
   }
-
-  const response = await getAI().models.generateContent({
-    model,
-    contents: prompt,
-    config
-  });
-
-  return {
-    text: response.text,
-    groundingMetadata: response.candidates?.[0]?.groundingMetadata
-  };
 };
 
 // --- Image & Video ---

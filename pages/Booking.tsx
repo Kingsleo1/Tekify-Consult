@@ -35,8 +35,17 @@ const Booking: React.FC = () => {
 
   useEffect(() => {
     const fetchServices = async () => {
-      const { data } = await supabase.from('tekify_services').select('*').order('name');
-      setServices(data || []);
+      try {
+        const { data, error } = await supabase.from('tekify_services').select('*').order('name');
+        if (error || !data || data.length === 0) throw new Error("DB Error");
+        setServices(data);
+      } catch (e) {
+        console.warn("Falling back to hardcoded TEKIFY_SERVICES", e);
+        // Fallback to hardcoded services
+        import('../services/pricingService').then(module => {
+          setServices(module.TEKIFY_SERVICES);
+        });
+      }
       // setLoadingServices(false);
     };
     fetchServices();
