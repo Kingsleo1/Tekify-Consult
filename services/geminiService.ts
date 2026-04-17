@@ -25,10 +25,11 @@ Your goal is to be helpful, professional, persuasive, and ultimately convert vis
 IMPORTANT: You are authorized to talk to customers about EVERYTHING concerning the site, as well as every other area or topic they might ask about. Do not restrict yourself to only business or consulting topics. Be a helpful, knowledgeable assistant in all domains.
 
 OUTPUT FORMATTING:
-- DO NOT use any markdown characters like asterisks (*) or hash (#).
-- Format your response clearly using standard text, numbered lists, bullet points (using simple dashes -), or standard HTML tags (<br>, <b>, <p>, <h3>, <ul>, <li>) for structure.
-- Provide structured, scannable, deeply reasoned responses that look highly professional for PDF quotations.
-- Always be very neat with spacing and paragraphs.
+- ZERO EMOJIS. DO NOT output any emojis whatsoever.
+- DO NOT use Markdown. ABSOLUTELY NO asterisks (*), hashtags (#), bullet dashes (-), or underscores (_) in your response.
+- YOU MUST format your responses strictly using HTML tags for structure (e.g., <h2>, <h3>, <p>, <ul>, <ol>, <li>, <strong>, <br>).
+- Provide structured, scannable, deeply reasoned responses that look highly professional for PDF documents.
+- Always implement clean paragraphing and bold headings.
 
 BUSINESS INFORMATION:
 Name: ${BUSINESS_INFO.name}
@@ -38,7 +39,7 @@ Phone: ${BUSINESS_INFO.phone}
 Address: ${BUSINESS_INFO.address}
 
 SERVICES OFFERED:
-${SERVICES.map(s => `- ${s.title}: ${s.description} (Starting at ${s.price})`).join('\n')}
+${SERVICES.map(s => `<li><strong>${s.title}</strong>: ${s.description} (Starting at ${s.price})</li>`).join('')}
 `;
 
 let chatSession: Chat | null = null;
@@ -49,14 +50,14 @@ const getSmartFallbackResponse = (message: string): string => {
   
   // Handling quotation requests
   if (lowerMsg.includes('quote') || lowerMsg.includes('price') || lowerMsg.includes('cost') || lowerMsg.includes('estimate') || lowerMsg.includes('how much')) {
-    let quoteHTML = `<h3><b>Quotation from ${BUSINESS_INFO.name}</b></h3><p>Based on your inquiry, here is a professional breakdown of our service pricing offerings:</p><ul>`;
+    let quoteHTML = `<h3><strong>Quotation from ${BUSINESS_INFO.name}</strong></h3><p>Based on your inquiry, here is a professional breakdown of our service pricing offerings:</p><ul>`;
     
     let totalEstimated = 0;
     let itemsFound = 0;
     
     TEKIFY_SERVICES.forEach(service => {
       if (lowerMsg.includes(service.name.toLowerCase().split(' ')[0]) || lowerMsg.includes(service.category.toLowerCase())) {
-        quoteHTML += `<li><b>${service.name}</b> - ₦${service.price.toLocaleString()}</li>`;
+        quoteHTML += `<li><strong>${service.name}</strong> &mdash; ₦${service.price.toLocaleString()}</li>`;
         totalEstimated += service.price;
         itemsFound++;
       }
@@ -65,27 +66,27 @@ const getSmartFallbackResponse = (message: string): string => {
     if (itemsFound === 0) {
       // General quote
       TEKIFY_SERVICES.slice(0, 4).forEach(service => {
-        quoteHTML += `<li><b>${service.name}</b> - Starting at ₦${service.price.toLocaleString()}</li>`;
+        quoteHTML += `<li><strong>${service.name}</strong> &mdash; Starting at ₦${service.price.toLocaleString()}</li>`;
       });
       quoteHTML += `</ul><br><p>Let us know your exact requirements for a tailor-made quotation.</p>`;
       return quoteHTML;
     }
     
-    quoteHTML += `</ul><br><p><b>Estimated Total Subtotal:</b> ₦${totalEstimated.toLocaleString()}</p>`;
+    quoteHTML += `</ul><br><p><strong>Estimated Total Subtotal:</strong> ₦${totalEstimated.toLocaleString()}</p>`;
     quoteHTML += `<p>This is a smart estimated quotation. We provide highly tailored solutions for our clients. Let's schedule a call to finalize the package.</p>`;
     return quoteHTML;
   }
   
   // General Help Responses
   if (lowerMsg.includes('service') || lowerMsg.includes('what do you do')) {
-    return `<h3><b>Our Expertise</b></h3><p>At ${BUSINESS_INFO.name}, we specialize in cutting-edge tech and digital solutions. Our core services include:</p><ul><li><b>Digital Marketing & SEO</b></li><li><b>Web & Mobile App Development</b></li><li><b>Cloud Architecture & Enterprise Solutions</b></li></ul><br><p>How can I assist your business today?</p>`;
+    return `<h3><strong>Our Expertise</strong></h3><p>At ${BUSINESS_INFO.name}, we specialize in cutting-edge tech and digital solutions. Our core services include:</p><ul><li><strong>Digital Marketing &amp; SEO</strong></li><li><strong>Web &amp; Mobile App Development</strong></li><li><strong>Cloud Architecture &amp; Enterprise Solutions</strong></li></ul><br><p>How can I assist your business today?</p>`;
   }
   
   if (lowerMsg.includes('contact') || lowerMsg.includes('call') || lowerMsg.includes('where')) {
-    return `<h3><b>Contact Information</b></h3><p>You can reach us seamlessly through:</p><ul><li><b>Email:</b> ${BUSINESS_INFO.email}</li><li><b>Phone:</b> ${BUSINESS_INFO.phone}</li><li><b>Office:</b> ${BUSINESS_INFO.address}</li></ul>`;
+    return `<h3><strong>Contact Information</strong></h3><p>You can reach us seamlessly through:</p><ul><li><strong>Email:</strong> ${BUSINESS_INFO.email}</li><li><strong>Phone:</strong> ${BUSINESS_INFO.phone}</li><li><strong>Office:</strong> ${BUSINESS_INFO.address}</li></ul>`;
   }
 
-  return `<h3><b>Support Response</b></h3><p>Thank you for reaching out to ${BUSINESS_INFO.name}. Our AI connection is currently operating in offline fallback mode.</p><p>We have carefully noted your inquiry: "<i>${message}</i>". To give you the most detailed and reasoned response, please reach out directly or check out our premium services on our platform.</p>`;
+  return `<h3><strong>Support Response</strong></h3><p>Thank you for reaching out to ${BUSINESS_INFO.name}. Our AI connection is currently operating in offline fallback mode.</p><p>We have carefully noted your inquiry.</p><p>To give you the most detailed and reasoned response, please reach out directly or check out our premium services on our platform.</p>`;
 };
 
 // --- Chat & Text Generation ---
@@ -116,8 +117,11 @@ export const sendMessageToTeki = async (message: string): Promise<AsyncIterable<
       for await (const chunk of result) {
         const responseChunk = chunk as GenerateContentResponse;
         if (responseChunk.text) {
-          // Clean asterisks just to be absolutely sure
-          yield responseChunk.text.replace(/[*#]/g, '');
+          // Clean asterisks, hashtags, dashes, underscores, and EVERYTHING that looks like markdown symbols
+          let cleaned = responseChunk.text.replace(/[*#\-_]/g, '');
+          // Remove ALL emojis using a unicode regex range
+          cleaned = cleaned.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{2B55}\u{2934}\u{2935}\u{2190}-\u{21FF}]/gu, '');
+          yield cleaned;
         }
       }
     }
@@ -177,8 +181,12 @@ export const generateTextContent = async (
       config
     });
 
+    let finalRes = response.text || "";
+    finalRes = finalRes.replace(/[*#\-_]/g, '');
+    finalRes = finalRes.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{2B55}\u{2934}\u{2935}\u{2190}-\u{21FF}]/gu, '');
+
     return {
-      text: (response.text || "").replace(/[*#]/g, ''),
+      text: finalRes,
       groundingMetadata: response.candidates?.[0]?.groundingMetadata
     };
   } catch {
