@@ -4,8 +4,31 @@ let supabaseInstance: SupabaseClient | null = null;
 
 export const getSupabase = (): SupabaseClient => {
   if (!supabaseInstance) {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+    const getEnvVars = () => {
+      // 1. Give priority to dynamically injected window variables (vital for cloud environments)
+      if (typeof window !== 'undefined' && (window as any).__ENV__) {
+        const env = (window as any).__ENV__;
+        if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+          return { url: env.SUPABASE_URL, key: env.SUPABASE_ANON_KEY };
+        }
+      }
+      // 2. Fallback to Vite statically replaced variables
+      if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL) {
+         return { url: import.meta.env.VITE_SUPABASE_URL, key: import.meta.env.VITE_SUPABASE_ANON_KEY };
+      }
+      // 3. Fallback to Node runtime variables
+      if (typeof process !== 'undefined' && process.env) {
+         return { 
+           url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL, 
+           key: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY 
+         };
+      }
+      return { url: '', key: '' };
+    };
+
+    const envConfig = getEnvVars();
+    const supabaseUrl = envConfig.url;
+    const supabaseAnonKey = envConfig.key;
 
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {
       console.warn("Supabase environment variables are missing or invalid. Some features may not work.");

@@ -21,7 +21,7 @@ let supabase: any = null;
 const getSupabase = () => {
   if (!supabase) {
     const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
     if (!supabaseUrl || !supabaseKey) {
       console.error("CRITICAL: Supabase environment variables are missing on the server.");
     }
@@ -668,11 +668,20 @@ async function startServer() {
     console.log("Static files path:", distPath);
     
     if (fs.existsSync(distPath)) {
-      app.use(express.static(distPath));
+      app.use(express.static(distPath, { index: false }));
       app.get("*splat", (req, res) => {
         const indexPath = path.join(distPath, "index.html");
         if (fs.existsSync(indexPath)) {
-          res.sendFile(indexPath);
+          let html = fs.readFileSync(indexPath, 'utf-8');
+          // Dynamically inject variables at runtime
+          const envScript = `<script>
+            window.__ENV__ = {
+              SUPABASE_URL: "${process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || ''}",
+              SUPABASE_ANON_KEY: "${process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''}"
+            };
+          </script>`;
+          html = html.replace('</head>', envScript + '</head>');
+          res.send(html);
         } else {
           res.status(404).send("Production build found (dist/) but index.html is missing. Please check your build process.");
         }

@@ -9,7 +9,21 @@ export default defineConfig(() => {
         host: '0.0.0.0',
         hmr: false,
       },
-      plugins: [react()],
+      plugins: [
+        react(),
+        {
+          name: 'html-transform',
+          transformIndexHtml(html) {
+            const envScript = `<script>
+              window.__ENV__ = {
+                SUPABASE_URL: "${process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || ''}",
+                SUPABASE_ANON_KEY: "${process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''}"
+              };
+            </script>`;
+            return html.replace('</head>', envScript + '</head>');
+          }
+        }
+      ],
       define: {
         'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || process.env.API_KEY || ""),
         'process.env.API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || process.env.API_KEY || ""),
