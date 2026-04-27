@@ -82,6 +82,33 @@ export const SERVICES: Service[] = [
     features: ["Social Media Management", "PPC Advertising", "Content Strategy", "Email Marketing", "Analytics & Reporting", "Conversion Rate Optimization"]
   },
   {
+    id: 'seo-basic',
+    title: "Basic SEO Plan",
+    description: "Essential SEO foundations for early-stage businesses and startups.",
+    longDescription: "Our Basic SEO Plan focuses on setting the right foundation for your online presence. We perform keyword research, optimize your on-page elements, and ensure your technical SEO is sound. This plan is ideal for Small Businesses looking to start ranking for local search terms and build organic traffic over time.",
+    price: "₦150,000",
+    icon: "Search",
+    features: ["Keyword Research", "On-page Optimization", "Meta Tags & Descriptions", "Google Search Console", "Basic Technical Audit", "Monthly Reporting"]
+  },
+  {
+    id: 'seo-standard',
+    title: "Standard SEO Plan",
+    description: "Advanced optimization strategies to dominate your industry niche.",
+    longDescription: "The Standard SEO Plan is designed for growing businesses that want to compete at a higher level. We dive deeper into competitor analysis, content strategy, and high-quality backlink building. We also optimize for local search to ensure you capture customers in your immediate vicinity while building authority on a broader scale.",
+    price: "₦300,000",
+    icon: "LineChart",
+    features: ["Competitor Analysis", "Content Audit", "Backlink Building", "Local SEO Focus", "Technical Fixes", "Detailed Analytics"]
+  },
+  {
+    id: 'seo-multiplatform',
+    title: "Multi-platform SEO Plan",
+    description: "Full-spectrum SEO across web, video, and social search ecosystems.",
+    longDescription: "In today's digital landscape, SEO isn't just about Google. Our Multi-platform SEO Plan optimizes your visibility across YouTube, Social Media search, and even App Stores. We create a holistic search strategy that ensures your brand appears wherever your customers are looking. This is the ultimate plan for market dominance and brand authority.",
+    price: "₦450,000",
+    icon: "Network",
+    features: ["YouTube SEO", "Social Search Optimization", "App Store SEO", "Holistic Strategy", "High-Authority Backlinks", "Bi-weekly Strategy Calls"]
+  },
+  {
     id: 'cloud-it',
     title: "Cloud & IT Infrastructure",
     description: "Secure and scalable cloud solutions (AWS, Azure, GCP) for growing businesses.",

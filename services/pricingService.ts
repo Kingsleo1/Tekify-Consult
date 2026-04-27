@@ -1,5 +1,3 @@
-import { supabase } from './supabaseClient';
-
 export interface ServicePlan {
   id: string;
   name: string;
@@ -9,7 +7,6 @@ export interface ServicePlan {
   pricingType: 'fixed' | 'custom';
   deliveryTime?: string;
   features: string[];
-  description?: string;
 }
 
 export const TEKIFY_SERVICES: ServicePlan[] = [
@@ -29,8 +26,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Basic brand positioning',
       'Community management (work hours)',
       'Monthly performance report'
-    ],
-    description: "Custom, scalable, and high-performance visibility tailored to your brand identity."
+    ]
   },
   {
     id: 'dm-growth',
@@ -47,8 +43,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Advanced storytelling captions',
       'Community management',
       'Monthly analytics report'
-    ],
-    description: "Data-driven strategies to increase your visibility and convert leads."
+    ]
   },
   {
     id: 'dm-leadgen',
@@ -66,8 +61,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Meta Ads management (ad spend excluded)',
       'WhatsApp & DM conversion support',
       'Monthly lead report'
-    ],
-    description: "Focus on ROI and conversion rates through strategic lead generation."
+    ]
   },
   {
     id: 'dm-dominance',
@@ -85,8 +79,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Lead funnel setup',
       'Priority community management',
       'Detailed ROI report'
-    ],
-    description: "Dominate your niche with our most comprehensive marketing strategy."
+    ]
   },
   // WEB & APP DEVELOPMENT
   {
@@ -103,8 +96,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Basic SEO setup',
       'Contact form',
       '2 revision rounds'
-    ],
-    description: "Professional multi-page website to kickstart your online presence."
+    ]
   },
   {
     id: 'web-business',
@@ -121,8 +113,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Speed optimization',
       'Advanced SEO basics',
       '3 revisions'
-    ],
-    description: "Robust business platform with content management and optimization."
+    ]
   },
   {
     id: 'web-pro-app',
@@ -139,8 +130,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'API integrations',
       'Admin panel',
       'Advanced UI/UX'
-    ],
-    description: "Complex web applications with dynamic functionality and integrations."
+    ]
   },
   {
     id: 'web-enterprise',
@@ -157,8 +147,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Multi-role system',
       'Priority support',
       'Custom timeline'
-    ],
-    description: "Custom software built to scale with your enterprise requirements."
+    ]
   },
   // ADDITIONAL SERVICES
   {
@@ -173,8 +162,7 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Social media creatives',
       'Marketing flyers',
       'Basic revisions'
-    ],
-    description: "Consistent high-quality design assets for your ongoing marketing needs."
+    ]
   },
   {
     id: 'logo-package',
@@ -188,23 +176,57 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Unlimited revisions',
       'PNG + SVG + PDF',
       'Brand color guide'
-    ],
-    description: "Craft a memorable identity with our professional logo design package."
+    ]
   },
   {
-    id: 'seo-opt',
-    name: 'SEO Optimization',
-    price: 120000,
-    category: 'Digital Marketing',
+    id: 'seo-basic',
+    name: 'Basic SEO Plan',
+    price: 150000,
+    category: 'SEO & Search',
     bookable: true,
     pricingType: 'fixed',
     features: [
-      'On-page SEO',
-      'Technical audit',
-      'Keyword research',
-      'Basic backlink setup'
-    ],
-    description: "Improve your search engine rankings and drive organic traffic."
+      'Keyword research (up to 10 keywords)',
+      'On-page SEO optimization',
+      'Meta tags & descriptions',
+      'Basic technical audit',
+      'Google Search Console setup',
+      'Monthly progress report'
+    ]
+  },
+  {
+    id: 'seo-standard',
+    name: 'Standard SEO Plan',
+    price: 300000,
+    category: 'SEO & Search',
+    bookable: true,
+    pricingType: 'fixed',
+    features: [
+      'Advanced keyword research',
+      'Comprehensive content audit',
+      'Backlink building strategy',
+      'Competitor analysis',
+      'Technical SEO fixes',
+      'Local SEO optimization',
+      'Monthly detailed analytics'
+    ]
+  },
+  {
+    id: 'seo-multiplatform',
+    name: 'Multi-platform SEO Plan',
+    price: 450000,
+    category: 'SEO & Search',
+    bookable: true,
+    pricingType: 'fixed',
+    features: [
+      'Cross-platform SEO strategy',
+      'YouTube SEO & search optimization',
+      'Social media search indexing',
+      'App store optimization (if applicable)',
+      'High-authority backlink building',
+      'Bi-weekly strategy calls',
+      'Full marketing funnel integration'
+    ]
   },
   {
     id: 'ads-mgmt',
@@ -218,52 +240,9 @@ export const TEKIFY_SERVICES: ServicePlan[] = [
       'Campaign monitoring',
       'Weekly optimization',
       'Performance report'
-    ],
-    description: "Expert management of your paid advertising campaigns for maximum ROI."
+    ]
   }
 ];
 
-export const getServiceById = (id: string, currentServices: ServicePlan[] = TEKIFY_SERVICES) => 
-  currentServices.find(s => s.id === id) || TEKIFY_SERVICES.find(s => s.id === id);
-
-export const getServicesByCategory = (category: string, currentServices: ServicePlan[] = TEKIFY_SERVICES) => 
-  currentServices.filter(s => s.category === category);
-
-/**
- * Fetches services from Supabase and merges/falls back to hardcoded TEKIFY_SERVICES.
- * Ensures the service catalogue is always available even if DB fails.
- */
-export const fetchServicesAndMerge = async (): Promise<ServicePlan[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('tekify_services')
-      .select('*')
-      .order('category', { ascending: true });
-
-    if (error) {
-      console.warn("Supabase fetch error, using hardcoded services:", error);
-      return TEKIFY_SERVICES;
-    }
-
-    if (!data || data.length === 0) {
-      console.info("Supabase returned no services, using hardcoded services.");
-      return TEKIFY_SERVICES;
-    }
-
-    // Merge logic: Start with hardcoded, overwrite with DB if ID matches, or add new from DB
-    const merged = [...TEKIFY_SERVICES];
-    data.forEach((dbService: any) => {
-      const index = merged.findIndex(s => s.id === dbService.id);
-      if (index !== -1) {
-        merged[index] = { ...merged[index], ...dbService };
-      } else {
-        merged.push(dbService as ServicePlan);
-      }
-    });
-
-    return merged;
-  } catch (err) {
-    console.error("Critical error fetching services, falling back to hardcoded:", err);
-    return TEKIFY_SERVICES;
-  }
-};
+export const getServiceById = (id: string) => TEKIFY_SERVICES.find(s => s.id === id);
+export const getServicesByCategory = (category: string) => TEKIFY_SERVICES.filter(s => s.category === category);

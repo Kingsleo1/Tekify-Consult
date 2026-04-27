@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, Users, Clock, Award, Loader2 } from 'lucide-react';
 import { PROJECTS, TESTIMONIALS, FAQS, TECH_STACK, WHY_TEKIFY_ITEMS, PROCESS_STEPS } from '../constants';
-import { fetchServicesAndMerge } from '../services/pricingService';
+import { TEKIFY_SERVICES } from '../services/pricingService';
+import { supabase } from '../services/supabaseClient';
 
 const Home: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [services, setServices] = useState<any[]>([]);
-  const [loadingServices, setLoadingServices] = useState(true);
+  const services = TEKIFY_SERVICES;
+  const loadingServices = false;
 
   useEffect(() => {
-    const loadServices = async () => {
-      const data = await fetchServicesAndMerge();
-      setServices(data);
-      setLoadingServices(false);
-    };
-    loadServices();
+    // Check cloud for connectivity
+    supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
+       if (!error && data && data.length > 0) {
+         console.log("Cloud ready.");
+       }
+    });
   }, []);
 
   const toggleFaq = (index: number) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Calendar, Clock, User, Mail, Phone, CheckCircle2, CreditCard, MessageCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { fetchServicesAndMerge, ServicePlan } from '../services/pricingService';
+import { ServicePlan, TEKIFY_SERVICES } from '../services/pricingService';
 import { BUSINESS_INFO } from '../constants';
 import PageHero from '../components/PageHero';
 
@@ -20,8 +20,7 @@ const Booking: React.FC = () => {
   const [step, setStep] = useState(1);
   const [bookingMethod, setBookingMethod] = useState<'online' | 'whatsapp'>('online');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [services, setServices] = useState<ServicePlan[]>([]);
-  // const [loadingServices, setLoadingServices] = useState(true);
+  const services = TEKIFY_SERVICES;
   const [formData, setFormData] = useState({
     service: initialServiceId,
     date: '',
@@ -33,11 +32,12 @@ const Booking: React.FC = () => {
   });
 
   useEffect(() => {
-    const loadServices = async () => {
-      const data = await fetchServicesAndMerge();
-      setServices(data);
-    };
-    loadServices();
+    // Check cloud for connectivity
+    supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
+       if (!error && data && data.length > 0) {
+         console.log("Cloud ready.");
+       }
+    });
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

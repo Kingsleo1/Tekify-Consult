@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight, ShoppingCart, Code2, Briefcase, Loader2 } from 'lucide-react';
 import { ENGAGEMENT_MODELS, TECH_STACK } from '../constants';
-import { fetchServicesAndMerge, ServicePlan } from '../services/pricingService';
+import { supabase } from '../services/supabaseClient';
+import { ServicePlan, TEKIFY_SERVICES } from '../services/pricingService';
 import PageHero from '../components/PageHero';
 
 const Services: React.FC = () => {
-  const [services, setServices] = useState<ServicePlan[]>([]);
-  const [loading, setLoading] = useState(true);
+  const services = TEKIFY_SERVICES;
+  const loading = false;
 
   useEffect(() => {
-    const loadServices = async () => {
-      const data = await fetchServicesAndMerge();
-      setServices(data);
-      setLoading(false);
-    };
-    loadServices();
+    // Check cloud for connectivity
+    supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
+       if (!error && data && data.length > 0) {
+         console.log("Cloud available.");
+       }
+    });
   }, []);
 
   return (
