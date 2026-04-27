@@ -9,7 +9,8 @@ import {
   X,
   FileText,
   CreditCard,
-  Trash2
+  Trash2,
+  Calendar
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import { TekifyReceipt, TekifyInvoice } from '../../types';
@@ -32,6 +33,7 @@ const AdminReceipts: React.FC = () => {
   const [amountPaid, setAmountPaid] = useState<number>(0);
   const [additionalNote, setAdditionalNote] = useState('');
   const [additionalItems, setAdditionalItems] = useState<any[]>([]);
+  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0]);
   
   // Custom Item State
   const [customItemName, setCustomItemName] = useState('');
@@ -188,7 +190,8 @@ const AdminReceipts: React.FC = () => {
           paymentMethod,
           amountPaid,
           additionalNote,
-          additionalItems
+          additionalItems,
+          paymentDate
         })
       });
 
@@ -199,6 +202,7 @@ const AdminReceipts: React.FC = () => {
         setAmountPaid(0);
         setAdditionalNote('');
         setAdditionalItems([]);
+        setPaymentDate(new Date().toISOString().split('T')[0]);
         fetchReceipts();
         fetchPendingInvoices();
       } else {
@@ -370,6 +374,20 @@ const AdminReceipts: React.FC = () => {
                     value={amountPaid}
                     onChange={(e) => setAmountPaid(Number(e.target.value))}
                     className="w-full px-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Payment Date</label>
+                <div className="relative group">
+                  <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                  <input 
+                    type="date" 
+                    required
+                    value={paymentDate}
+                    onChange={(e) => setPaymentDate(e.target.value)}
+                    className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-primary-500 transition-all dark:text-white text-sm"
                   />
                 </div>
               </div>

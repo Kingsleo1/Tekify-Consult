@@ -500,67 +500,118 @@ app.post("/api/bookings", async (req, res) => {
 
   // --- MANUAL RECEIPT CREATION ---
   app.post("/api/admin/receipts", async (req, res) => {
-    const { invoiceId, paymentMethod, amountPaid, additionalNote, additionalItems } = req.body;
+    const { invoiceId, paymentMethod, amountPaid, additionalNote, additionalItems, paymentDate } = req.body;
 
     try {
+      if (!amountPaid || Number(amountPaid) <= 0) {
+        throw new Error("A valid amount paid is required.");
+      }
+
       const receiptNumber = `RCP-${Date.now()}`;
-      const { data: receipt, error: recError } = await getSupabase()
+      const numAmount = Number(amountPaid);
+
+      // Prepare insert data
+      const insertData: any = {
+        receipt_number: receiptNumber,
+        payment_method: paymentMethod || "Bank Transfer",
+        amount_paid: numAmount,
+        additional_note: additionalNote || "",
+        additional_items: additionalItems || [],
+        issued_at: paymentDate ? new Date(paymentDate).toISOString() : new Date().toISOString()
+      };
+
+      // Only add invoice_id if it's a valid non-empty string and not the string "null"
+      if (invoiceId && invoiceId !== "" && invoiceId !== "null") {
+        insertData.invoice_id = invoiceId;
+      }
+
+      console.log("Creating Manual Receipt:", insertData);
+
+      let { data: receipt, error: recError } = await getSupabase()
         .from("tekify_receipts")
-        .insert([{
-          receipt_number: receiptNumber,
-          invoice_id: invoiceId,
-          payment_method: paymentMethod,
-          amount_paid: amountPaid,
-          additional_note: additionalNote,
-          additional_items: additionalItems || []
-        }])
+        .insert([insertData])
         .select()
         .single();
 
-      if (recError) throw recError;
+      // Resilience: If columns are missing in the DB, retry with a minimal payload
+      if (recError && (recError.message.includes('additional_items') || recError.message.includes('additional_note') || recError.code === '42703')) {
+        console.warn("DB Schema mismatch detected. Retrying with minimal receipt data...");
+        const minimalData = {
+          receipt_number: insertData.receipt_number,
+          invoice_id: insertData.invoice_id,
+          payment_method: insertData.payment_method,
+          amount_paid: insertData.amount_paid,
+          issued_at: insertData.issued_at
+        };
+        
+        const retry = await getSupabase()
+          .from("tekify_receipts")
+          .insert([minimalData])
+          .select()
+          .single();
+        
+        receipt = retry.data;
+        recError = retry.error;
+        
+        if (!recError) {
+          console.info("Minimal receipt recorded successfully. Note: additional_items/note were omitted due to missing DB columns.");
+        }
+      }
 
-      // Update invoice status if fully paid
-      const { data: invoice } = await getSupabase()
-        .from("tekify_invoices")
-        .select("total_amount")
-        .eq("id", invoiceId)
-        .single();
+      if (recError) {
+        console.error("Supabase Receipt Insert Error Details:", JSON.stringify(recError, null, 2));
+        throw recError;
+      }
 
-      if (invoice && amountPaid >= invoice.total_amount) {
-        await getSupabase()
+      // Update invoice status if fully paid and we have an invoiceId
+      if (insertData.invoice_id) {
+        const { data: invoice, error: invFetchError } = await getSupabase()
           .from("tekify_invoices")
-          .update({ status: 'paid', paid_at: new Date().toISOString() })
-          .eq("id", invoiceId);
+          .select("total_amount")
+          .eq("id", insertData.invoice_id)
+          .single();
+
+        if (invoice && !invFetchError) {
+          const totalAmt = Number(invoice.total_amount);
+          if (numAmount >= totalAmt) {
+            await getSupabase()
+              .from("tekify_invoices")
+              .update({ status: 'paid', paid_at: new Date().toISOString() })
+              .eq("id", insertData.invoice_id);
+          }
+        }
       }
 
       // Send Receipt Email
       try {
-        const { data: fullInvoice } = await getSupabase()
-          .from("tekify_invoices")
-          .select(`
-            *,
-            tekify_customers (*)
-          `)
-          .eq("id", invoiceId)
-          .single();
+        if (insertData.invoice_id) {
+          const { data: fullInvoice } = await getSupabase()
+            .from("tekify_invoices")
+            .select(`
+              *,
+              tekify_customers (*)
+            `)
+            .eq("id", insertData.invoice_id)
+            .single();
 
-        if (fullInvoice && fullInvoice.tekify_customers) {
-          const mailOptions = {
-            from: `"Tekify Consult Receipts" <${process.env.SMTP_USER || 'noreply@tekify.com'}>`,
-            to: fullInvoice.tekify_customers.email,
-            subject: `Receipt ${receiptNumber} from Tekify Consult`,
-            html: `
-              <h1>Payment Received</h1>
-              <p>Hello ${fullInvoice.tekify_customers.full_name},</p>
-              <p>We have received your payment of ₦${Number(amountPaid).toLocaleString()} for Invoice ${fullInvoice.invoice_number}.</p>
-              <p>Receipt Number: ${receiptNumber}</p>
-              ${additionalNote ? `<p><strong>Note:</strong> ${additionalNote}</p>` : ''}
-              <br/>
-              <p>Thank you for your business!<br/>Tekify Consult</p>
-            `,
-          };
+          if (fullInvoice && fullInvoice.tekify_customers) {
+            const mailOptions = {
+              from: `"Tekify Consult Receipts" <${process.env.SMTP_USER || 'noreply@tekify.com'}>`,
+              to: fullInvoice.tekify_customers.email,
+              subject: `Receipt ${receiptNumber} from Tekify Consult`,
+              html: `
+                <h1>Payment Received</h1>
+                <p>Hello ${fullInvoice.tekify_customers.full_name},</p>
+                <p>We have received your payment of ₦${numAmount.toLocaleString()} for Invoice ${fullInvoice.invoice_number}.</p>
+                <p>Receipt Number: ${receiptNumber}</p>
+                ${additionalNote ? `<p><strong>Note:</strong> ${additionalNote}</p>` : ''}
+                <br/>
+                <p>Thank you for your business!<br/>Tekify Consult</p>
+              `,
+            };
 
-          await transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
+          }
         }
       } catch (emailError) {
         console.error("Failed to send manual receipt email:", emailError);
@@ -569,7 +620,10 @@ app.post("/api/bookings", async (req, res) => {
       res.json(receipt);
     } catch (error: any) {
       console.error("Manual Receipt Error:", error);
-      res.status(500).json({ error: error.message || "An unexpected error occurred" });
+      res.status(500).json({ 
+        error: error.message || "An unexpected error occurred",
+        details: error.details || error.hint || null
+      });
     }
   });
 
@@ -579,11 +633,12 @@ app.post("/api/bookings", async (req, res) => {
     const { paymentMethod, amountPaid, additionalNote, additionalItems } = req.body;
 
     try {
+      const numAmount = Number(amountPaid);
       const { data: receipt, error: recError } = await getSupabase()
         .from("tekify_receipts")
         .update({
           payment_method: paymentMethod,
-          amount_paid: amountPaid,
+          amount_paid: isNaN(numAmount) ? 0 : numAmount,
           additional_note: additionalNote,
           additional_items: additionalItems || []
         })
@@ -591,12 +646,18 @@ app.post("/api/bookings", async (req, res) => {
         .select()
         .single();
 
-      if (recError) throw recError;
+      if (recError) {
+        console.error("Supabase Receipt Update Error:", recError);
+        throw recError;
+      }
 
       res.json(receipt);
     } catch (error: any) {
       console.error("Update Receipt Error:", error);
-      res.status(500).json({ error: error.message || "An unexpected error occurred" });
+      res.status(500).json({ 
+        error: error.message || "An unexpected error occurred",
+        details: error.details || error.hint || null
+      });
     }
   });
 

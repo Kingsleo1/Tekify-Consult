@@ -15,6 +15,13 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
+      // Check if Supabase is properly configured
+      const isConfigured = supabase && (supabase as any).supabaseUrl && !(supabase as any).supabaseUrl.includes('placeholder');
+      
+      if (!isConfigured) {
+        throw new Error('Supabase is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.');
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,

@@ -66,11 +66,11 @@ export const generateInvoicePDF = (invoice: any) => {
           <div style="display: inline-block; text-align: left;">
             <div style="display: grid; grid-template-columns: 100px 1fr; gap: 8px; margin-bottom: 4px;">
               <span style="font-size: 13px; color: #64748b;">Issue Date:</span>
-              <span style="font-size: 13px; font-weight: 600; color: #0f172a;">${new Date(invoice.created_at).toLocaleDateString()}</span>
+              <span style="font-size: 13px; font-weight: 600; color: #0f172a;">${new Date().toLocaleDateString()}</span>
             </div>
             <div style="display: grid; grid-template-columns: 100px 1fr; gap: 8px;">
               <span style="font-size: 13px; color: #64748b;">Due Date:</span>
-              <span style="font-size: 13px; font-weight: 600; color: #0f172a;">${new Date(invoice.due_date).toLocaleDateString()}</span>
+              <span style="font-size: 13px; font-weight: 600; color: #0f172a;">${invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : new Date().toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ export const generateReceiptPDF = (receipt: any) => {
           <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 16px;">Payment Details</h3>
           <div style="margin-bottom: 8px;">
             <span style="font-size: 13px; color: #64748b; margin-right: 12px;">Date Paid:</span>
-            <span style="font-size: 14px; font-weight: 600; color: #0f172a;">${new Date(receipt.issued_at).toLocaleDateString()}</span>
+            <span style="font-size: 14px; font-weight: 600; color: #0f172a;">${receipt.payment_date ? new Date(receipt.payment_date).toLocaleDateString() : (receipt.issued_at ? new Date(receipt.issued_at).toLocaleDateString() : new Date().toLocaleDateString())}</span>
           </div>
           <div>
             <span style="font-size: 13px; color: #64748b; margin-right: 12px;">Invoice Ref:</span>

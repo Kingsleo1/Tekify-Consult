@@ -44,10 +44,23 @@ ${SERVICES.map(s => `<li><strong>${s.title}</strong>: ${s.description} (Starting
 
 let chatSession: Chat | null = null;
 
+import { supabase } from './supabaseClient';
+
 // --- Fallback Smart Responder & Calculator ---
-const getSmartFallbackResponse = (message: string): string => {
+const getSmartFallbackResponse = async (message: string): Promise<string> => {
   const lowerMsg = message.toLowerCase();
   
+  // Try fetching from DB for latest products
+  let activeServices = TEKIFY_SERVICES;
+  try {
+    const { data, error } = await supabase.from('tekify_services').select('*').order('name');
+    if (!error && data && data.length > 0) {
+      activeServices = data;
+    }
+  } catch {
+    console.warn("DB not reachable for fallback generator, using hardcoded services.");
+  }
+
   // Handling quotation requests
   if (lowerMsg.includes('quote') || lowerMsg.includes('price') || lowerMsg.includes('cost') || lowerMsg.includes('estimate') || lowerMsg.includes('how much')) {
     let quoteHTML = `<h3><strong>Quotation from ${BUSINESS_INFO.name}</strong></h3><p>Based on your inquiry, here is a professional breakdown of our service pricing offerings:</p><ul>`;
@@ -55,18 +68,19 @@ const getSmartFallbackResponse = (message: string): string => {
     let totalEstimated = 0;
     let itemsFound = 0;
     
-    TEKIFY_SERVICES.forEach(service => {
-      if (lowerMsg.includes(service.name.toLowerCase().split(' ')[0]) || lowerMsg.includes(service.category.toLowerCase())) {
-        quoteHTML += `<li><strong>${service.name}</strong> &mdash; ₦${service.price.toLocaleString()}</li>`;
-        totalEstimated += service.price;
+    activeServices.forEach(service => {
+      const cat = service.category || '';
+      if (lowerMsg.includes(service.name.toLowerCase().split(' ')[0]) || lowerMsg.includes(cat.toLowerCase())) {
+        quoteHTML += `<li><strong>${service.name}</strong> &mdash; ₦${Number(service.price).toLocaleString()}</li>`;
+        totalEstimated += Number(service.price);
         itemsFound++;
       }
     });
 
     if (itemsFound === 0) {
       // General quote
-      TEKIFY_SERVICES.slice(0, 4).forEach(service => {
-        quoteHTML += `<li><strong>${service.name}</strong> &mdash; Starting at ₦${service.price.toLocaleString()}</li>`;
+      activeServices.slice(0, 4).forEach(service => {
+        quoteHTML += `<li><strong>${service.name}</strong> &mdash; Starting at ₦${Number(service.price).toLocaleString()}</li>`;
       });
       quoteHTML += `</ul><br><p>Let us know your exact requirements for a tailor-made quotation.</p>`;
       return quoteHTML;
@@ -117,8 +131,8 @@ export const sendMessageToTeki = async (message: string): Promise<AsyncIterable<
       for await (const chunk of result) {
         const responseChunk = chunk as GenerateContentResponse;
         if (responseChunk.text) {
-          // Clean asterisks, hashtags, dashes, underscores, and EVERYTHING that looks like markdown symbols
-          let cleaned = responseChunk.text.replace(/[*#\-_]/g, '');
+          // Deep clean: Remove asterisks and hashtags, but PRESERVE hyphens and underscores for normal text
+          let cleaned = responseChunk.text.replace(/[*#]/g, '');
           // Remove ALL emojis using a unicode regex range
           cleaned = cleaned.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{2B55}\u{2934}\u{2935}\u{2190}-\u{21FF}]/gu, '');
           yield cleaned;
@@ -128,7 +142,7 @@ export const sendMessageToTeki = async (message: string): Promise<AsyncIterable<
     return streamGenerator();
   } catch {
     console.warn("Falling back to Smart Offline Responder");
-    const fallbackText = getSmartFallbackResponse(message);
+    const fallbackText = await getSmartFallbackResponse(message);
     async function* mockStream() {
       yield fallbackText;
     }
@@ -182,7 +196,7 @@ export const generateTextContent = async (
     });
 
     let finalRes = response.text || "";
-    finalRes = finalRes.replace(/[*#\-_]/g, '');
+    finalRes = finalRes.replace(/[*#]/g, '');
     finalRes = finalRes.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B50}\u{2B55}\u{2934}\u{2935}\u{2190}-\u{21FF}]/gu, '');
 
     return {
@@ -192,7 +206,7 @@ export const generateTextContent = async (
   } catch {
     console.warn("Falling back to Smart Offline Responder");
     return {
-      text: getSmartFallbackResponse(prompt),
+      text: await getSmartFallbackResponse(prompt),
       groundingMetadata: undefined
     };
   }
