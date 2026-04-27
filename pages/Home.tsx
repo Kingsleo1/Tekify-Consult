@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Globe, Cpu, BarChart3, Layers, Code, Play, Star, ChevronDown, Users, Clock, Award, Loader2 } from 'lucide-react';
 import { PROJECTS, TESTIMONIALS, FAQS, TECH_STACK, WHY_TEKIFY_ITEMS, PROCESS_STEPS } from '../constants';
-import { supabase } from '../services/supabaseClient';
+import { fetchServicesAndMerge } from '../services/pricingService';
 
 const Home: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -10,21 +10,12 @@ const Home: React.FC = () => {
   const [loadingServices, setLoadingServices] = useState(true);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const { data, error } = await supabase.from('tekify_services').select('*').order('name');
-        if (error || !data || data.length === 0) throw new Error("DB Error");
-        setServices(data);
-      } catch (e) {
-        console.warn("Falling back to hardcoded TEKIFY_SERVICES", e);
-        // Fallback to hardcoded services
-        import('../services/pricingService').then(module => {
-          setServices(module.TEKIFY_SERVICES);
-        });
-      }
+    const loadServices = async () => {
+      const data = await fetchServicesAndMerge();
+      setServices(data);
       setLoadingServices(false);
     };
-    fetchServices();
+    loadServices();
   }, []);
 
   const toggleFaq = (index: number) => {

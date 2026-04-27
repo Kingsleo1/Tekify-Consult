@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight, ShoppingCart, Code2, Briefcase, Loader2 } from 'lucide-react';
 import { ENGAGEMENT_MODELS, TECH_STACK } from '../constants';
-import { supabase } from '../services/supabaseClient';
-import { ServicePlan } from '../types';
+import { fetchServicesAndMerge, ServicePlan } from '../services/pricingService';
 import PageHero from '../components/PageHero';
 
 const Services: React.FC = () => {
@@ -11,23 +10,12 @@ const Services: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('tekify_services')
-          .select('*')
-          .order('category', { ascending: true });
-        if (error || !data || data.length === 0) throw new Error("DB Error");
-        setServices(data);
-      } catch (e) {
-        console.warn("Falling back to hardcoded TEKIFY_SERVICES", e);
-        import('../services/pricingService').then(module => {
-          setServices(module.TEKIFY_SERVICES);
-        });
-      }
+    const loadServices = async () => {
+      const data = await fetchServicesAndMerge();
+      setServices(data);
       setLoading(false);
     };
-    fetchServices();
+    loadServices();
   }, []);
 
   return (

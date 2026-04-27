@@ -1,6 +1,6 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Modality } from "@google/genai";
 import { BUSINESS_INFO, SERVICES } from '../constants';
-import { TEKIFY_SERVICES } from './pricingService';
+import { fetchServicesAndMerge } from './pricingService';
 
 // We will initialize the API client lazily inside the functions
 // to ensure it uses the most up-to-date API key.
@@ -44,22 +44,12 @@ ${SERVICES.map(s => `<li><strong>${s.title}</strong>: ${s.description} (Starting
 
 let chatSession: Chat | null = null;
 
-import { supabase } from './supabaseClient';
-
 // --- Fallback Smart Responder & Calculator ---
 const getSmartFallbackResponse = async (message: string): Promise<string> => {
   const lowerMsg = message.toLowerCase();
   
-  // Try fetching from DB for latest products
-  let activeServices = TEKIFY_SERVICES;
-  try {
-    const { data, error } = await supabase.from('tekify_services').select('*').order('name');
-    if (!error && data && data.length > 0) {
-      activeServices = data;
-    }
-  } catch {
-    console.warn("DB not reachable for fallback generator, using hardcoded services.");
-  }
+  // Use robust fetch with fallback
+  const activeServices = await fetchServicesAndMerge();
 
   // Handling quotation requests
   if (lowerMsg.includes('quote') || lowerMsg.includes('price') || lowerMsg.includes('cost') || lowerMsg.includes('estimate') || lowerMsg.includes('how much')) {

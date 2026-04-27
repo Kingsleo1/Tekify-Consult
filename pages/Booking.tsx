@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Calendar, Clock, User, Mail, Phone, CheckCircle2, CreditCard, MessageCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '../services/supabaseClient';
-import { ServicePlan } from '../types';
+import { fetchServicesAndMerge, ServicePlan } from '../services/pricingService';
 import { BUSINESS_INFO } from '../constants';
 import PageHero from '../components/PageHero';
 
@@ -34,21 +33,11 @@ const Booking: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const { data, error } = await supabase.from('tekify_services').select('*').order('name');
-        if (error || !data || data.length === 0) throw new Error("DB Error");
-        setServices(data);
-      } catch (e) {
-        console.warn("Falling back to hardcoded TEKIFY_SERVICES", e);
-        // Fallback to hardcoded services
-        import('../services/pricingService').then(module => {
-          setServices(module.TEKIFY_SERVICES);
-        });
-      }
-      // setLoadingServices(false);
+    const loadServices = async () => {
+      const data = await fetchServicesAndMerge();
+      setServices(data);
     };
-    fetchServices();
+    loadServices();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
