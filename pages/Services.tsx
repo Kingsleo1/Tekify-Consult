@@ -11,6 +11,9 @@ const Services: React.FC = () => {
   const loading = false;
 
   useEffect(() => {
+    // Diagnostic log to verify deployment version
+    console.log("Tekify Services Version: 2026-04-27-SEO-READY");
+    
     // Check cloud for connectivity
     supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
        if (!error && data && data.length > 0) {

@@ -230,7 +230,9 @@ INSERT INTO tekify_services (id, name, price, category, bookable, pricing_type, 
 ('web-enterprise', 'Enterprise Solution', 1000000, 'Enterprise Development', true, 'custom', ARRAY['Full custom architecture', 'Advanced security', 'Scalable backend', 'Payment integrations', 'Multi-role system', 'Priority support', 'Custom timeline']),
 ('design-monthly', 'Graphic Design Monthly', 80000, 'Design', true, 'fixed', ARRAY['10–15 designs monthly', 'Social media creatives', 'Marketing flyers', 'Basic revisions']),
 ('logo-package', 'Logo Design Package', 50000, 'Branding', true, 'fixed', ARRAY['3 logo concepts', 'Unlimited revisions', 'PNG + SVG + PDF', 'Brand color guide']),
-('seo-opt', 'SEO Optimization', 120000, 'Digital Marketing', true, 'fixed', ARRAY['On-page SEO', 'Technical audit', 'Keyword research', 'Basic backlink setup']),
+('seo-basic', 'Basic SEO Plan', 150000, 'SEO & Search', true, 'fixed', ARRAY['Keyword research (up to 10 keywords)', 'On-page SEO optimization', 'Meta tags & descriptions', 'Basic technical audit', 'Google Search Console setup', 'Monthly progress report']),
+('seo-standard', 'Standard SEO Plan', 300000, 'SEO & Search', true, 'fixed', ARRAY['Advanced keyword research', 'Comprehensive content audit', 'Backlink building strategy', 'Competitor analysis', 'Technical SEO fixes', 'Local SEO optimization', 'Monthly detailed analytics']),
+('seo-multiplatform', 'Multi-platform SEO Plan', 450000, 'SEO & Search', true, 'fixed', ARRAY['Cross-platform SEO strategy', 'YouTube SEO & search optimization', 'Social media search indexing', 'App store optimization (if applicable)', 'High-authority backlink building', 'Bi-weekly strategy calls', 'Full marketing funnel integration']),
 ('ads-mgmt', 'Paid Ads Management', 100000, 'Advertising', true, 'fixed', ARRAY['Meta ads setup', 'Campaign monitoring', 'Weekly optimization', 'Performance report'])
 ON CONFLICT (id) DO UPDATE SET
 name = EXCLUDED.name,
