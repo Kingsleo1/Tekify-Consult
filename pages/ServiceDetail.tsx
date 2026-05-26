@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Check, Globe, ArrowLeft, Loader2 } from 'lucide-react';
 import { TEKIFY_SERVICES } from '../services/pricingService';
+import { supabase } from '../services/supabaseClient';
 import PageHero from '../components/PageHero';
 
 const ServiceDetail: React.FC = () => {

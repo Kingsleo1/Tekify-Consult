@@ -1,8 +1,25 @@
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
+import { toast } from 'sonner';
 import { BUSINESS_INFO } from '../constants';
 
-export const generateInvoicePDF = (invoice: any) => {
+const getHtml2Pdf = () => {
+  const lib = (html2pdf as any).default || html2pdf;
+  if (!lib) {
+    throw new Error('html2pdf library could not be loaded as a function.');
+  }
+  return lib;
+};
+
+const getLogoUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}${BUSINESS_INFO.logo}`;
+  }
+  return BUSINESS_INFO.logo;
+};
+
+export const generateInvoicePDF = async (invoice: any) => {
+  const toastId = toast.loading("Preparing invoice PDF...");
   const element = document.createElement('div');
   
   const itemsHtml = invoice.tekify_invoice_items?.map((item: any) => `
@@ -36,7 +53,7 @@ export const generateInvoicePDF = (invoice: any) => {
       <!-- Header -->
       <div style="display: flex; justify-content: space-between; margin-bottom: 48px;">
         <div style="display: flex; gap: 20px; align-items: flex-start;">
-          <img src="${BUSINESS_INFO.logo}" alt="Logo" style="height: 64px; width: auto; object-fit: contain;" crossorigin="anonymous" />
+          <img src="${getLogoUrl()}" alt="Logo" style="height: 64px; width: auto; object-fit: contain;" crossorigin="anonymous" />
           <div>
             <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; letter-spacing: -0.5px;">${BUSINESS_INFO.name}</h1>
             <p style="font-size: 13px; color: #64748b; margin: 0;">${BUSINESS_INFO.address}</p>
@@ -147,14 +164,38 @@ export const generateInvoicePDF = (invoice: any) => {
     margin: 0,
     filename: `${customerName}_Invoice_${invoice.invoice_number}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
   };
 
-  html2pdf().set(opt).from(element).save();
+  try {
+    const lib = getHtml2Pdf();
+    await lib().set(opt).from(element).save();
+    toast.success("Invoice downloaded successfully!", { id: toastId });
+  } catch (err: any) {
+    console.warn("CORS/Image rendering blocked PDF generation. Retrying fallback flow...", err);
+    try {
+      const fallbackElement = element.cloneNode(true) as HTMLDivElement;
+      const imgs = fallbackElement.querySelectorAll('img');
+      imgs.forEach(img => img.removeAttribute('crossorigin'));
+      
+      const fallbackOpt = {
+        ...opt,
+        html2canvas: { scale: 2, useCORS: false, logging: false }
+      };
+      
+      const lib = getHtml2Pdf();
+      await lib().set(fallbackOpt).from(fallbackElement).save();
+      toast.success("Invoice downloaded (fallback mode)!", { id: toastId });
+    } catch (fallbackErr: any) {
+      console.error("Critical PDF render error:", fallbackErr);
+      toast.error(`Could not generate PDF: ${fallbackErr.message || 'Error occurred'}`, { id: toastId });
+    }
+  }
 };
 
-export const generateReceiptPDF = (receipt: any) => {
+export const generateReceiptPDF = async (receipt: any) => {
+  const toastId = toast.loading("Preparing receipt PDF...");
   const element = document.createElement('div');
   
   let allItems = [];
@@ -191,7 +232,7 @@ export const generateReceiptPDF = (receipt: any) => {
       <!-- Header -->
       <div style="display: flex; justify-content: space-between; margin-bottom: 48px;">
         <div style="display: flex; gap: 20px; align-items: flex-start;">
-          <img src="${BUSINESS_INFO.logo}" alt="Logo" style="height: 64px; width: auto; object-fit: contain;" crossorigin="anonymous" />
+          <img src="${getLogoUrl()}" alt="Logo" style="height: 64px; width: auto; object-fit: contain;" crossorigin="anonymous" />
           <div>
             <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; letter-spacing: -0.5px;">${BUSINESS_INFO.name}</h1>
             <p style="font-size: 13px; color: #64748b; margin: 0;">${BUSINESS_INFO.address}</p>
@@ -265,9 +306,32 @@ export const generateReceiptPDF = (receipt: any) => {
     margin: 0,
     filename: `${customerName}_Receipt_${receipt.receipt_number}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
   };
 
-  html2pdf().set(opt).from(element).save();
+  try {
+    const lib = getHtml2Pdf();
+    await lib().set(opt).from(element).save();
+    toast.success("Receipt downloaded successfully!", { id: toastId });
+  } catch (err: any) {
+    console.warn("CORS/Image rendering blocked PDF generation. Retrying fallback flow...", err);
+    try {
+      const fallbackElement = element.cloneNode(true) as HTMLDivElement;
+      const imgs = fallbackElement.querySelectorAll('img');
+      imgs.forEach(img => img.removeAttribute('crossorigin'));
+      
+      const fallbackOpt = {
+        ...opt,
+        html2canvas: { scale: 2, useCORS: false, logging: false }
+      };
+      
+      const lib = getHtml2Pdf();
+      await lib().set(fallbackOpt).from(fallbackElement).save();
+      toast.success("Receipt downloaded (fallback mode)!", { id: toastId });
+    } catch (fallbackErr: any) {
+      console.error("Critical PDF render error:", fallbackErr);
+      toast.error(`Could not generate PDF: ${fallbackErr.message || 'Error occurred'}`, { id: toastId });
+    }
+  }
 };

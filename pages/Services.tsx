@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight, ShoppingCart, Code2, Briefcase, Loader2 } from 'lucide-react';
 import { ENGAGEMENT_MODELS, TECH_STACK } from '../constants';
 import { supabase } from '../services/supabaseClient';
-import { ServicePlan, TEKIFY_SERVICES } from '../services/pricingService';
+import { TEKIFY_SERVICES } from '../services/pricingService';
 import PageHero from '../components/PageHero';
 
 const Services: React.FC = () => {
@@ -14,12 +14,18 @@ const Services: React.FC = () => {
     // Diagnostic log to verify deployment version
     console.log("Tekify Services Version: 2026-04-27-SEO-READY");
     
-    // Check cloud for connectivity
-    supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
-       if (!error && data && data.length > 0) {
-         console.log("Cloud available.");
-       }
-    });
+    // Check cloud for connectivity with safety catch
+    supabase.from('tekify_services').select('id').limit(1)
+      .then(({ error, data }) => {
+        if (!error && data && data.length > 0) {
+          console.log("Cloud available.");
+        } else if (error) {
+          console.warn("Cloud connection returned error:", error.message);
+        }
+      })
+      .catch((err) => {
+        console.warn("Cloud connection check failed (Failed to fetch). Using robust local fallback options instead.", err);
+      });
   }, []);
 
   return (

@@ -10,6 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-server
+.env
+test-db.js
+test-db-2.js
+test-insert.js
 *.local
 
 # Editor directories and files

@@ -11,12 +11,18 @@ const Home: React.FC = () => {
   const loadingServices = false;
 
   useEffect(() => {
-    // Check cloud for connectivity
-    supabase.from('tekify_services').select('id').limit(1).then(({ error, data }) => {
-       if (!error && data && data.length > 0) {
-         console.log("Cloud ready.");
-       }
-    });
+    // Check cloud for connectivity with safety catch
+    supabase.from('tekify_services').select('id').limit(1)
+      .then(({ error, data }) => {
+        if (!error && data && data.length > 0) {
+          console.log("Cloud ready.");
+        } else if (error) {
+          console.warn("Cloud connection returned error:", error.message);
+        }
+      })
+      .catch((err) => {
+        console.warn("Cloud connection check failed (Failed to fetch). Using robust local fallback options instead.", err);
+      });
   }, []);
 
   const toggleFaq = (index: number) => {

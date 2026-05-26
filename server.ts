@@ -663,6 +663,9 @@ app.post("/api/bookings", async (req, res) => {
 
   // --- LOGO PROXY ---
   app.get("/api/logo", async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
